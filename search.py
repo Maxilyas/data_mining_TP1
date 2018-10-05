@@ -66,20 +66,13 @@ def areaBasedSampling(wAreaBased,data,n):
     taille = [1]*n
     motifs = []
     allMotifs = []
-    sumA = [0]*n
-
-    for i in D:
-        sumA[iterate] = sum(i)
-        iterate = iterate +1
-
-    iterate = 0
 
     for i in D:
         cpt = 0
         chooseMotifs = random.uniform(0, 1)
         for j in range(len(i)):
             cpt = cpt + j + 1
-            if chooseMotifs <= cpt/sumA[iterate]:
+            if chooseMotifs <= cpt/len(i):
                 taille[iterate] = len(str(i[j]))
                 break
         iterate = iterate +1
