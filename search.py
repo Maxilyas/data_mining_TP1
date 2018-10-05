@@ -9,6 +9,7 @@ def format_data():
     # Format data of a file to list ( uniform data )
     data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
     data = data.tolist()
+
     # Initializing wait for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
     wAreaBased = []
