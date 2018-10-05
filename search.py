@@ -1,16 +1,22 @@
 import numpy as np
 from datetime import datetime
 import random
-import pickle
 
 chance = random.seed(datetime.now())
 
 def format_data():
-    # Format data of a file to list ( uniform data )
-    data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
-    data = data.tolist()
 
-    # Initializing wait for FrequencyBased and AreaBased Algorithm
+    # Format data of a file to list ( uniform data )
+    #data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+    #data = data.tolist()
+
+    # Using when there is different line length
+    with open('test.txt') as f:
+        data = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+
+    # Initializing weights for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
     wAreaBased = []
     for i in data:
@@ -132,10 +138,10 @@ def contains(small, big):
 
 if __name__ == '__main__':
     # Number of iterations
-    n = 1
+    n = 10
     # Format data
     wFrequencyBased,wAreaBased,data = format_data()
     # FrenquencyBased Algorithm
     frequencyBasedSampling(wFrequencyBased,data,n)
     # AreaBased Algorithm
-    areaBasedSampling(wAreaBased,data,n)
+    #areaBasedSampling(wAreaBased,data,n)
