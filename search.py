@@ -1,21 +1,22 @@
 import numpy as np
 from datetime import datetime
 import random
+import cProfile
+import re
+import multiprocessing as mp
 
 chance = random.seed(datetime.now())
+# Using when there is different line length
+with open('connect.dat') as f:
+    data = []
+    for line in f:  # read rest of lines
+        data.append([int(x) for x in line.split()])
+# Format data of a file to list ( uniform data )
+#data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+#data = data.tolist()
 
 def format_data():
-
-    # Format data of a file to list ( uniform data )
-    #data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
-    #data = data.tolist()
-
-    # Using when there is different line length
-    with open('test.txt') as f:
-        data = []
-        for line in f:  # read rest of lines
-            data.append([int(x) for x in line.split()])
-
+    global data
     # Initializing weights for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
     wAreaBased = []
@@ -47,6 +48,7 @@ def frequencyBasedSampling(wFrequencyBased,data,n):
         isIn = False
         for j in i:
             # Choosing randomly a int number between 0 and 1
+            global chance
             chance = random.randint(0, 1)
             # Add it to the motifs if chance equals 1
             if chance == 1:
@@ -64,20 +66,14 @@ def frequencyBasedSampling(wFrequencyBased,data,n):
     frequencyMotifs(allMotifs,data)
 
 def frequencyMotifs(allMotifs,data):
-    nbFrequent = [i for i in range(len(allMotifs))]
     print("Len allMotifs : ", len(allMotifs))
-
-    # Browse through data
-    for i in data:
-        count = 0
-        for j in allMotifs:
-            # Simple counter
-            if contains(j,i) == True:
-                nbFrequent[count] = nbFrequent[count] + 1
-            count = count +1
-    print("NBFrequency : ", nbFrequent)
-    # Returning a list of frequency
-    return nbFrequent
+    # Optimize the speed
+    cpus = parallelizeCode()
+    # Calling multiple agent depending on how many cpu (2 by default)
+    pool = mp.Pool(processes=cpus)
+    # Calculating nb frequency in parellel for each motif
+    result = pool.map(contains,allMotifs)
+    print("NBFrequency : ", result)
 
 
 def areaBasedSampling(wAreaBased,data,n):
@@ -125,23 +121,48 @@ def areaBasedSampling(wAreaBased,data,n):
     print("ALL MOTIFS :",allMotifs)
     # Call to the frequency function
     frequencyMotifs(allMotifs, data)
+
 #######################################################################
 
-def contains(small, big):
-    # Checking if a motif is in a "transaction"
-    result = all(elem in big for elem in small)
-    if result:
-        return True
-    return False
+def wrapperC(small_big):
+    return contains(*small_big)
+def contains(small):
+    count = 0
+    global data
+    for i in data:
+        if all(elem in i for elem in small):
+            count = count + 1
+    return count
+
 
 ########################################################################
 
+def parallelizeCode ():
+    try:
+        cpus = mp.cpu_count()
+    except NotImplementedError:
+        cpus = 2  # arbitrary default
+    return cpus
+
 if __name__ == '__main__':
+
+    #######################
+    # Show the time passed in each function
+    pr = cProfile.Profile()
+    pr.enable()
+    #######################
+
     # Number of iterations
-    n = 10
+    n = 1000
     # Format data
     wFrequencyBased,wAreaBased,data = format_data()
     # FrenquencyBased Algorithm
     frequencyBasedSampling(wFrequencyBased,data,n)
     # AreaBased Algorithm
     #areaBasedSampling(wAreaBased,data,n)
+
+    ########################
+    # Close and print result
+    pr.disable()
+    pr.print_stats()
+    ########################
