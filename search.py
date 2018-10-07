@@ -4,10 +4,11 @@ import random
 import cProfile
 import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
+import sys
 
 chance = random.seed(datetime.now())
 # Use it when there is different line length in the file
-with open('mushroom.dat') as f:
+with open('kosarak.dat') as f:
     data = []
     for line in f:  # read rest of lines
         data.append([int(x) for x in line.split()])
@@ -20,9 +21,10 @@ def format_data():
     # Initializing weights for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
     wAreaBased = []
+
     for i in data:
         # Calculating weights
-        wFrequencyBased.append(pow(2, len(i)))
+        wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
         wAreaBased.append(len(i)*pow(2, len(i)-1))
 
     return wFrequencyBased, wAreaBased, data
@@ -99,6 +101,7 @@ def areaBasedSampling(wAreaBased,data,n):
 # Get Transaction from both algorithm
 def getTransactionData(w,data,n):
 
+    print(sys.maxsize)
     # Given a number of iteration, choose randomly n "transaction"
     D = random.choices(data, w, k=n)
     print("TRANSACTION PRISE :", D)
@@ -112,7 +115,7 @@ def frequencyMotifs(allMotifs):
     # Calling multiple agent depending on how many cpu (2 by default)
     pool = mp.Pool(processes=cpus)
     # Calculating nb frequency in parellel for each motif
-    result = pool.map(contains,allMotifs)
+    result = pool.map(contains, allMotifs)
     print("NBFrequency : ", result)
 
     # List of len of allMotifs
@@ -133,8 +136,9 @@ def contains(small):
     count = 0
     global data
     for i in data:
-        if all(elem in i for elem in small):
-            count = count + 1
+        if len(i) < 80:
+            if all(elem in i for elem in small):
+                count = count + 1
     return count
 
 
@@ -166,6 +170,7 @@ def parallelizeCode ():
     except NotImplementedError:
         cpus = 2  # arbitrary default
     return cpus
+
 
 if __name__ == '__main__':
 
