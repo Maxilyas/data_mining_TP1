@@ -2,16 +2,15 @@ import numpy as np
 from datetime import datetime
 import random
 import cProfile
-import re
 import multiprocessing as mp
+import matplotlib.pyplot as plt # pour l'affichage
 
 chance = random.seed(datetime.now())
 # Use it when there is different line length in the file
-with open('connect.dat') as f:
+with open('mushroom.dat') as f:
     data = []
     for line in f:  # read rest of lines
         data.append([int(x) for x in line.split()])
-
 # Format data of a file to list ( uniform data )
 #data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
 #data = data.tolist()
@@ -116,6 +115,12 @@ def frequencyMotifs(allMotifs):
     result = pool.map(contains,allMotifs)
     print("NBFrequency : ", result)
 
+    # List of len of allMotifs
+    x = [len(l) for l in allMotifs]
+    # Create a graph with relation between len of motifs and the number of frequency
+    showGraph(x,result)
+
+
 ########################################################################
 
 def isInAllMotifs(allMotifs,motifs):
@@ -134,6 +139,26 @@ def contains(small):
 
 
 ########################################################################
+def showGraph(x,y):
+    GraphFreq = Graph()
+    GraphFreq.x_plot = x
+    GraphFreq.y_plot = y
+    GraphFreq.showGraphScatter()
+    #GraphFreq.showGraphPlot()
+
+class Graph:
+    def __init__(self):
+        self.x_plot = []
+        self.y_plot = []
+
+    def showGraphScatter(self):
+        plt.scatter(self.x_plot, self.y_plot)
+        plt.show()
+
+    def showGraphPlot(self):
+        plt.plot(self.x_plot, self.y_plot)
+        plt.show()
+
 
 def parallelizeCode ():
     try:
@@ -158,6 +183,8 @@ if __name__ == '__main__':
     frequencyBasedSampling(wFrequencyBased,data,n)
     # AreaBased Algorithm
     #areaBasedSampling(wAreaBased,data,n)
+
+
 
     ########################
     # Close and print result
