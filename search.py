@@ -116,7 +116,7 @@ def frequencyMotifs(allMotifs):
     result = pool.map(contains,allMotifs)
     print("NBFrequency : ", result)
 
-#######################################################################
+########################################################################
 
 def isInAllMotifs(allMotifs,motifs):
     for z in allMotifs:
