@@ -6,11 +6,12 @@ import re
 import multiprocessing as mp
 
 chance = random.seed(datetime.now())
-# Using when there is different line length
+# Use it when there is different line length in the file
 with open('connect.dat') as f:
     data = []
     for line in f:  # read rest of lines
         data.append([int(x) for x in line.split()])
+
 # Format data of a file to list ( uniform data )
 #data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
 #data = data.tolist()
@@ -22,30 +23,20 @@ def format_data():
     wAreaBased = []
     for i in data:
         # Calculating weights
-        wFrequencyBased.append(pow(2,len(i)))
-        wAreaBased.append(len(i)*pow(2,len(i)-1))
+        wFrequencyBased.append(pow(2, len(i)))
+        wAreaBased.append(len(i)*pow(2, len(i)-1))
 
-    return wFrequencyBased,wAreaBased,data
+    return wFrequencyBased, wAreaBased, data
 
-
-def getTransactionData(w,data,n):
-
-    # Given a number of iteration, choose randomly n "transaction"
-    D = random.choices(data, w, k=n)
-    print("TRANSACTION PRISE :",D)
-    return D
-
-
+# First Algorithm
 def frequencyBasedSampling(wFrequencyBased,data,n):
     # List of Transaction (n equals the number of iterations)
-    D = getTransactionData(wFrequencyBased, data,n)
+    D = getTransactionData(wFrequencyBased, data, n)
     # Motifs chosen at first
     motifs = []
     # Motifs chosen without duplicate
     allMotifs = []
-
     for i in D:
-        isIn = False
         for j in i:
             # Choosing randomly a int number between 0 and 1
             global chance
@@ -55,27 +46,15 @@ def frequencyBasedSampling(wFrequencyBased,data,n):
                 motifs.append(j)
         print("MOTIFS : ",motifs)
         # Checking if this motifs is already in allMotifs
-        for z in allMotifs:
-            if z == motifs:
-                isIn = True
-        if isIn == False:
+        # If not we are adding it
+        if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         motifs = []
     print("ALL MOTIFS : ",allMotifs)
     # Call to the frequency function
-    frequencyMotifs(allMotifs,data)
+    frequencyMotifs(allMotifs)
 
-def frequencyMotifs(allMotifs,data):
-    print("Len allMotifs : ", len(allMotifs))
-    # Optimize the speed
-    cpus = parallelizeCode()
-    # Calling multiple agent depending on how many cpu (2 by default)
-    pool = mp.Pool(processes=cpus)
-    # Calculating nb frequency in parellel for each motif
-    result = pool.map(contains,allMotifs)
-    print("NBFrequency : ", result)
-
-
+# Second Algorithm
 def areaBasedSampling(wAreaBased,data,n):
     # List of Transaction (n equals the number of iterations)
     D = getTransactionData(wAreaBased, data,n)
@@ -98,34 +77,53 @@ def areaBasedSampling(wAreaBased,data,n):
             if chooseMotifs <= cpt/len(i):
                 size[iterate] = len(str(i[j]))
                 break
-        iterate = iterate +1
+        iterate = iterate + 1
 
     iterate = 0
 
     for i in D:
-        isIn = False
         for j in i:
             # If it matches the size of the motifs, we create our list
             if len(str(j)) == size[iterate]:
                 motifs.append(j)
         iterate = iterate + 1
         # Checking if this motifs is already in allMotifs
-        for z in allMotifs:
-            if z == motifs:
-                isIn = True
         # If not we are adding it
-        if isIn == False:
+        if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         print("MOTIFS : ", motifs)
         motifs = []
-    print("ALL MOTIFS :",allMotifs)
+    print("ALL MOTIFS :", allMotifs)
     # Call to the frequency function
-    frequencyMotifs(allMotifs, data)
+    frequencyMotifs(allMotifs)
+
+# Get Transaction from both algorithm
+def getTransactionData(w,data,n):
+
+    # Given a number of iteration, choose randomly n "transaction"
+    D = random.choices(data, w, k=n)
+    print("TRANSACTION PRISE :", D)
+    return D
+
+# Get Frequency Motifs from both algorithm
+def frequencyMotifs(allMotifs):
+    print("Len allMotifs : ", len(allMotifs))
+    # Optimize the speed
+    cpus = parallelizeCode()
+    # Calling multiple agent depending on how many cpu (2 by default)
+    pool = mp.Pool(processes=cpus)
+    # Calculating nb frequency in parellel for each motif
+    result = pool.map(contains,allMotifs)
+    print("NBFrequency : ", result)
 
 #######################################################################
 
-def wrapperC(small_big):
-    return contains(*small_big)
+def isInAllMotifs(allMotifs,motifs):
+    for z in allMotifs:
+        if z == motifs:
+            return True
+    return False
+
 def contains(small):
     count = 0
     global data
