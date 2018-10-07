@@ -5,23 +5,21 @@ import cProfile
 import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
 import sys
+from itertools import combinations
 
 chance = random.seed(datetime.now())
-# Use it when there is different line length in the file
-with open('kosarak.dat') as f:
-    data = []
-    for line in f:  # read rest of lines
-        data.append([int(x) for x in line.split()])
-# Format data of a file to list ( uniform data )
-#data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
-#data = data.tolist()
-
 def format_data():
-    global data
     # Initializing weights for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
     wAreaBased = []
-
+    # Use it when there is different line length in the file
+    with open('mushroom.dat') as f:
+        data = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+    # Format data of a file to list ( uniform data )
+    # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+    # data = data.tolist()
     for i in data:
         # Calculating weights
         wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
@@ -30,9 +28,7 @@ def format_data():
     return wFrequencyBased, wAreaBased, data
 
 # First Algorithm
-def frequencyBasedSampling(wFrequencyBased,data,n):
-    # List of Transaction (n equals the number of iterations)
-    D = getTransactionData(wFrequencyBased, data, n)
+def frequencyBasedSampling(D):
     # Motifs chosen at first
     motifs = []
     # Motifs chosen without duplicate
@@ -56,18 +52,15 @@ def frequencyBasedSampling(wFrequencyBased,data,n):
     frequencyMotifs(allMotifs)
 
 # Second Algorithm
-def areaBasedSampling(wAreaBased,data,n):
-    # List of Transaction (n equals the number of iterations)
-    D = getTransactionData(wAreaBased, data,n)
+def areaBasedSampling(D):
     # Iterator
     iterate = 0
     # Size of motifs chosen
-    size = [1]*n
+    size = [1]*len(D)
     # Motifs chosen at first
     motifs = []
     # Motifs chosen without duplicate
     allMotifs = []
-
     for i in D:
         cpt = 0
         # Choosing randomly a float number between 0 and 1
@@ -113,16 +106,19 @@ def frequencyMotifs(allMotifs):
     # Optimize the speed
     cpus = parallelizeCode()
     # Calling multiple agent depending on how many cpu (2 by default)
-    pool = mp.Pool(processes=cpus)
+    pool = mp.Pool(cpus, init_pool, [D])
     # Calculating nb frequency in parellel for each motif
     result = pool.map(contains, allMotifs)
     print("NBFrequency : ", result)
 
     # List of len of allMotifs
     x = [len(l) for l in allMotifs]
-    # Create a graph with relation between len of motifs and the number of frequency
+    # Create a graph with relation between len of motifs and the number of frequency
     showGraph(x,result)
 
+def init_pool(D):
+    global Df
+    Df = D
 
 ########################################################################
 
@@ -133,12 +129,17 @@ def isInAllMotifs(allMotifs,motifs):
     return False
 
 def contains(small):
-    count = 0
-    global data
-    for i in data:
-        if len(i) < 80:
-            if all(elem in i for elem in small):
-                count = count + 1
+    allcomb = 0
+    count = [0]*pow(2, len(small))
+    print("DDDD",Df)
+    for value in range(1, len(small)+1):
+        for item in combinations(small, value):
+            allcomb = allcomb + 1
+            for i in Df:
+                #if len(i) < 80:
+                if all(elem in i for elem in item):
+                    count[allcomb] = count[allcomb] + 1
+    print("COUNT :",count)
     return count
 
 
@@ -173,26 +174,29 @@ def parallelizeCode ():
 
 
 if __name__ == '__main__':
-
+    checkTime = False
     #######################
     # Show the time passed in each function
-    pr = cProfile.Profile()
-    pr.enable()
+    if checkTime:
+        pr = cProfile.Profile()
+        pr.enable()
     #######################
-
     # Number of iterations
-    n = 1000
+    n = 2
     # Format data
     wFrequencyBased,wAreaBased,data = format_data()
+    # List of Transaction (n equals the number of iterations)
+    D = getTransactionData(wFrequencyBased,data,n)
     # FrenquencyBased Algorithm
-    frequencyBasedSampling(wFrequencyBased,data,n)
+    frequencyBasedSampling(D)
     # AreaBased Algorithm
-    #areaBasedSampling(wAreaBased,data,n)
+    #areaBasedSampling(Da)
 
 
 
     ########################
     # Close and print result
-    pr.disable()
-    pr.print_stats()
+    if checkTime:
+        pr.disable()
+        pr.print_stats()
     ########################
