@@ -48,8 +48,10 @@ def frequencyBasedSampling(D):
             allMotifs.append(motifs)
         motifs = []
     print("ALL MOTIFS : ",allMotifs)
-    # Call to the frequency function
-    frequencyMotifs(allMotifs)
+    # Call to the frequency function in the sample
+    #frequencyMotifs(allMotifs)
+    # Call on all DB
+    frequencyMotifsInAllDB(allMotifs)
 
 # Second Algorithm
 def areaBasedSampling(D):
@@ -90,6 +92,8 @@ def areaBasedSampling(D):
     print("ALL MOTIFS :", allMotifs)
     # Call to the frequency function
     frequencyMotifs(allMotifs)
+    # Call on all DB
+    frequencyMotifsInAllDB(allMotifs)
 
 # Get Transaction from both algorithm
 def getTransactionData(w,data,n):
@@ -116,9 +120,28 @@ def frequencyMotifs(allMotifs):
     # Create a graph with relation between len of motifs and the number of frequency
     showGraph(x,result)
 
+# Get Frequency Motifs in all DB
+def frequencyMotifsInAllDB(allMotifs):
+    print("Len allMotifs : ", len(allMotifs))
+    # Optimize the speed
+    cpus = parallelizeCode()
+    # Calling multiple agent depending on how many cpu (2 by default)
+    pool = mp.Pool(cpus, init_pool_data, [data])
+    # Calculating nb frequency in parellel for each motif
+    result = pool.map(checkAllDB, allMotifs)
+    print("NBFrequency : ", result)
+
+    # List of len of allMotifs
+    x = [len(l) for l in allMotifs]
+    # Create a graph with relation between len of motifs and the number of frequency
+    showGraph(x,result)
+
 def init_pool(D):
     global Df
     Df = D
+def init_pool_data(db):
+    global data
+    data = db
 
 ########################################################################
 
@@ -132,6 +155,13 @@ def contains(small):
     count = 0
     for i in Df:
         #if len(i) < 80:
+        if all(elem in i for elem in small):
+            count = count + 1
+    return count
+
+def checkAllDB(small):
+    count = 0
+    for i in data:
         if all(elem in i for elem in small):
             count = count + 1
     return count
