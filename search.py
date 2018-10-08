@@ -187,7 +187,7 @@ if __name__ == '__main__':
         # FrenquencyBased Algorithm
         frequencyBasedSampling(D)
     if algo == 2:
-        D = getTransactionData(wFrequencyBased,data,n)
+        D = getTransactionData(wAreaBased,data,n)
         # AreaBased Algorithm
         areaBasedSampling(D)
 
