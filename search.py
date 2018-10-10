@@ -72,6 +72,7 @@ def areaBasedSampling(D):
             if chooseMotifs <= cpt/len(i)*2:
                 size[iterate] = cpt
                 break
+        # Choosing element depending on the length of the motifs (random in transaction)
         motifs = random.sample(i, size[iterate])
         # Checking if this motifs is already in allMotifs
         # If not we are adding it
