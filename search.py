@@ -27,6 +27,7 @@ def format_data():
 
     return wFrequencyBased, wAreaBased, data
 
+
 # First Algorithm
 def frequencyBasedSampling(D):
     # Motifs chosen at first
@@ -58,11 +59,11 @@ def areaBasedSampling(D):
     # Iterator
     iterate = 0
     # Size of motifs chosen
-    size = [1]*len(D)
-    # Motifs chosen at first
-    motifs = []
+    size = [0]*len(D)
+
     # Motifs chosen without duplicate
     allMotifs = []
+
     for i in D:
         cpt = 0
         # Choosing randomly a float number between 0 and 1
@@ -70,30 +71,28 @@ def areaBasedSampling(D):
         # Choosing size of the motifs (> importance to bigger motifs)
         for j in range(len(i)):
             cpt = cpt + j + 1
-            if chooseMotifs <= cpt/len(i):
-                size[iterate] = len(str(i[j]))
+            if chooseMotifs <= cpt/len(i)*2:
+                size[iterate] = cpt
                 break
         iterate = iterate + 1
 
     iterate = 0
 
     for i in D:
-        for j in i:
-            # If it matches the size of the motifs, we create our list
-            if len(str(j)) == size[iterate]:
-                motifs.append(j)
+        motifs = random.sample(i, size[iterate])
         iterate = iterate + 1
         # Checking if this motifs is already in allMotifs
         # If not we are adding it
         if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         print("MOTIFS : ", motifs)
-        motifs = []
+
     print("ALL MOTIFS :", allMotifs)
+
     # Call to the frequency function
     frequencyMotifs(allMotifs)
     # Call on all DB
-    frequencyMotifsInAllDB(allMotifs)
+    #frequencyMotifsInAllDB(allMotifs)
 
 # Get Transaction from both algorithm
 def getTransactionData(w,data,n):
@@ -106,14 +105,14 @@ def getTransactionData(w,data,n):
 
 # Get Frequency Motifs from both algorithm
 def frequencyMotifs(allMotifs):
-    print("Len allMotifs : ", len(allMotifs))
+    print("Nombre de motifs : ", len(allMotifs))
     # Optimize the speed
     cpus = parallelizeCode()
     # Calling multiple agent depending on how many cpu (2 by default)
     pool = mp.Pool(cpus, init_pool, [D])
     # Calculating nb frequency in parellel for each motif
     result = pool.map(contains, allMotifs)
-    print("NBFrequency : ", result)
+    print("Fréquence de chaque motifs : ", result)
 
     # List of len of allMotifs
     x = [len(l) for l in allMotifs]
@@ -122,14 +121,14 @@ def frequencyMotifs(allMotifs):
 
 # Get Frequency Motifs in all DB
 def frequencyMotifsInAllDB(allMotifs):
-    print("Len allMotifs : ", len(allMotifs))
+    print("Nombre de motifs : ", len(allMotifs))
     # Optimize the speed
     cpus = parallelizeCode()
     # Calling multiple agent depending on how many cpu (2 by default)
     pool = mp.Pool(cpus, init_pool_data, [data])
     # Calculating nb frequency in parellel for each motif
     result = pool.map(checkAllDB, allMotifs)
-    print("NBFrequency : ", result)
+    print("Fréquence de chaque motifs : ", result)
 
     # List of len of allMotifs
     x = [len(l) for l in allMotifs]
@@ -199,7 +198,7 @@ def parallelizeCode ():
 
 if __name__ == '__main__':
     checkTime = False
-    algo = 1
+    algo = 2
     #######################
     # Show the time passed in each function
     if checkTime:
