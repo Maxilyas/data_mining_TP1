@@ -27,7 +27,6 @@ def format_data():
 
     return wFrequencyBased, wAreaBased, data
 
-
 # First Algorithm
 def frequencyBasedSampling(D):
     # Motifs chosen at first
@@ -48,7 +47,7 @@ def frequencyBasedSampling(D):
         if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         motifs = []
-    print("ALL MOTIFS : ",allMotifs)
+    print("ALL MOTIFS : ", allMotifs)
     # Call to the frequency function in the sample
     #frequencyMotifs(allMotifs)
     # Call on all DB
@@ -60,7 +59,6 @@ def areaBasedSampling(D):
     iterate = 0
     # Size of motifs chosen
     size = [0]*len(D)
-
     # Motifs chosen without duplicate
     allMotifs = []
 
@@ -74,17 +72,12 @@ def areaBasedSampling(D):
             if chooseMotifs <= cpt/len(i)*2:
                 size[iterate] = cpt
                 break
-        iterate = iterate + 1
-
-    iterate = 0
-
-    for i in D:
         motifs = random.sample(i, size[iterate])
-        iterate = iterate + 1
         # Checking if this motifs is already in allMotifs
         # If not we are adding it
         if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
+        iterate = iterate + 1
         print("MOTIFS : ", motifs)
 
     print("ALL MOTIFS :", allMotifs)
@@ -117,7 +110,7 @@ def frequencyMotifs(allMotifs):
     # List of len of allMotifs
     x = [len(l) for l in allMotifs]
     # Create a graph with relation between len of motifs and the number of frequency
-    showGraph(x,result)
+    showGraph(x, result)
 
 # Get Frequency Motifs in all DB
 def frequencyMotifsInAllDB(allMotifs):
@@ -208,15 +201,15 @@ if __name__ == '__main__':
     # Number of iterations
     n = 1000
     # Format data
-    wFrequencyBased,wAreaBased,data = format_data()
+    wFrequencyBased, wAreaBased, data = format_data()
 
     if algo == 1:
         # List of Transaction (n equals the number of iterations)
-        D = getTransactionData(wFrequencyBased,data,n)
+        D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
         frequencyBasedSampling(D)
     if algo == 2:
-        D = getTransactionData(wAreaBased,data,n)
+        D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
         areaBasedSampling(D)
 
