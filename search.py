@@ -4,9 +4,7 @@ import random
 import cProfile
 import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
-import sys
-from itertools import combinations
-
+import ransac
 chance = random.seed(datetime.now())
 def format_data():
     # Initializing weights for FrequencyBased and AreaBased Algorithm
@@ -51,7 +49,9 @@ def frequencyBasedSampling(D):
     # Call to the frequency function in the sample
     #frequencyMotifs(allMotifs)
     # Call on all DB
-    frequencyMotifsInAllDB(allMotifs)
+    #frequencyMotifsInAllDB(allMotifs)
+
+    showGraphFrequency(allMotifs)
 
 # Second Algorithm
 def areaBasedSampling(D):
@@ -82,16 +82,14 @@ def areaBasedSampling(D):
         print("MOTIFS : ", motifs)
 
     print("ALL MOTIFS :", allMotifs)
-
+    showGraphFrequency(allMotifs)
     # Call to the frequency function
-    frequencyMotifs(allMotifs)
+    #frequencyMotifs(allMotifs)
     # Call on all DB
     #frequencyMotifsInAllDB(allMotifs)
 
 # Get Transaction from both algorithm
 def getTransactionData(w,data,n):
-    # Max size you can have
-    #print(sys.maxsize)
     # Given a number of iteration, choose randomly n "transaction"
     D = random.choices(data, w, k=n)
     print("TRANSACTION PRISE :", D)
@@ -108,10 +106,16 @@ def frequencyMotifs(allMotifs):
     result = pool.map(contains, allMotifs)
     print("Fréquence de chaque motifs : ", result)
 
+    return result
+def showGraphFrequency(allMotifs):
+
+    resultData = frequencyMotifsInAllDB(allMotifs)
+    resultEch = frequencyMotifs(allMotifs)
+
     # List of len of allMotifs
-    x = [len(l) for l in allMotifs]
+    #x = [len(l) for l in allMotifs]
     # Create a graph with relation between len of motifs and the number of frequency
-    showGraph(x, result)
+    showGraph(resultEch, resultData)
 
 # Get Frequency Motifs in all DB
 def frequencyMotifsInAllDB(allMotifs):
@@ -124,10 +128,7 @@ def frequencyMotifsInAllDB(allMotifs):
     result = pool.map(checkAllDB, allMotifs)
     print("Fréquence de chaque motifs : ", result)
 
-    # List of len of allMotifs
-    x = [len(l) for l in allMotifs]
-    # Create a graph with relation between len of motifs and the number of frequency
-    showGraph(x,result)
+    return result
 
 def init_pool(D):
     global Df
@@ -192,7 +193,7 @@ def parallelizeCode ():
 
 if __name__ == '__main__':
     checkTime = False
-    algo = 2
+    algo = 1
     #######################
     # Show the time passed in each function
     if checkTime:
