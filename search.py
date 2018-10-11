@@ -6,7 +6,9 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
 from sklearn.linear_model import LinearRegression
 import collections as c
+
 chance = random.seed(datetime.now())
+
 ##################################################################
 #########################DATA#####################################
 
@@ -97,6 +99,8 @@ def isInAllMotifs(allMotifs,motifs):
         if z == motifs:
             return True
     return False
+
+##################################################################
 #############################EVAL##DIVERSITY######################
 
 def evalDiversity(epoch,algo):
