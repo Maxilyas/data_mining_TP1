@@ -4,8 +4,12 @@ import random
 import cProfile
 import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
-import ransac
+from sklearn import linear_model
+
 chance = random.seed(datetime.now())
+##################################################################
+#########################DATA#####################################
+
 def format_data():
     # Initializing weights for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
@@ -24,6 +28,16 @@ def format_data():
         wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
 
     return wFrequencyBased, wAreaBased, data
+
+# Get Transaction from both algorithm
+def getTransactionData(w,data,n):
+    # Given a number of iteration, choose randomly n "transaction"
+    D = random.choices(data, w, k=n)
+    print("TRANSACTION PRISE :", D)
+    return D
+
+##################################################################
+##########################ALGORITHM###############################
 
 # First Algorithm
 def frequencyBasedSampling(D):
@@ -46,12 +60,7 @@ def frequencyBasedSampling(D):
             allMotifs.append(motifs)
         motifs = []
     print("ALL MOTIFS : ", allMotifs)
-    # Call to the frequency function in the sample
-    #frequencyMotifs(allMotifs)
-    # Call on all DB
-    #frequencyMotifsInAllDB(allMotifs)
-
-    showGraphFrequency(allMotifs)
+    return allMotifs
 
 # Second Algorithm
 def areaBasedSampling(D):
@@ -80,20 +89,17 @@ def areaBasedSampling(D):
             allMotifs.append(motifs)
         iterate = iterate + 1
         print("MOTIFS : ", motifs)
-
     print("ALL MOTIFS :", allMotifs)
-    showGraphFrequency(allMotifs)
-    # Call to the frequency function
-    #frequencyMotifs(allMotifs)
-    # Call on all DB
-    #frequencyMotifsInAllDB(allMotifs)
+    return allMotifs
 
-# Get Transaction from both algorithm
-def getTransactionData(w,data,n):
-    # Given a number of iteration, choose randomly n "transaction"
-    D = random.choices(data, w, k=n)
-    print("TRANSACTION PRISE :", D)
-    return D
+def isInAllMotifs(allMotifs,motifs):
+    for z in allMotifs:
+        if z == motifs:
+            return True
+    return False
+
+##################################################################
+###############MULTI_PROCESSING####COMPUTE FREQ###################
 
 # Get Frequency Motifs from both algorithm
 def frequencyMotifs(allMotifs):
@@ -107,15 +113,6 @@ def frequencyMotifs(allMotifs):
     print("Fréquence de chaque motifs : ", result)
 
     return result
-def showGraphFrequency(allMotifs):
-
-    resultData = frequencyMotifsInAllDB(allMotifs)
-    resultEch = frequencyMotifs(allMotifs)
-
-    # List of len of allMotifs
-    #x = [len(l) for l in allMotifs]
-    # Create a graph with relation between len of motifs and the number of frequency
-    showGraph(resultEch, resultData)
 
 # Get Frequency Motifs in all DB
 def frequencyMotifsInAllDB(allMotifs):
@@ -137,14 +134,6 @@ def init_pool_data(db):
     global data
     data = db
 
-########################################################################
-
-def isInAllMotifs(allMotifs,motifs):
-    for z in allMotifs:
-        if z == motifs:
-            return True
-    return False
-
 def contains(small):
     count = 0
     for i in Df:
@@ -160,29 +149,6 @@ def checkAllDB(small):
             count = count + 1
     return count
 
-
-########################################################################
-def showGraph(x,y):
-    GraphFreq = Graph()
-    GraphFreq.x_plot = x
-    GraphFreq.y_plot = y
-    GraphFreq.showGraphScatter()
-    #GraphFreq.showGraphPlot()
-
-class Graph:
-    def __init__(self):
-        self.x_plot = []
-        self.y_plot = []
-
-    def showGraphScatter(self):
-        plt.scatter(self.x_plot, self.y_plot)
-        plt.show()
-
-    def showGraphPlot(self):
-        plt.plot(self.x_plot, self.y_plot)
-        plt.show()
-
-
 def parallelizeCode ():
     try:
         cpus = mp.cpu_count()
@@ -190,6 +156,48 @@ def parallelizeCode ():
         cpus = 2  # arbitrary default
     return cpus
 
+##################################################################
+###########################GRAPH##################################
+
+def showGraphFrequency(x,y):
+
+    GraphFreq = Graph()
+    GraphFreq.x_plot = x
+    GraphFreq.y_plot = y
+    GraphFreq.X = np.array(x).reshape(-1,1)
+
+    # Create a graph with relation between Freq Data and Freq sample
+    GraphFreq.showGraphScatterAndRansac()
+
+
+class Graph:
+    def __init__(self):
+        self.x_plot = []
+        self.y_plot = []
+        self.X = np.array([])
+
+    def showGraphScatterAndRansac(self):
+        # Fit line using all data
+        lr = linear_model.LinearRegression()
+        lr.fit(self.X, self.y_plot)
+        # Predict data of estimated models
+        line_X = np.arange(self.X.min(), self.X.max())[:, np.newaxis]
+        line_y = lr.predict(line_X)
+        lw = 2
+
+        plt.plot(line_X, line_y, color='navy', linewidth=lw, label='Linear regressor')
+        plt.xlabel("FreqSample")
+        plt.ylabel("FreqData")
+        plt.scatter(self.x_plot, self.y_plot)
+        plt.show()
+
+    def showGraphScatterOnly(self):
+        plt.scatter(self.x_plot, self.y_plot)
+        plt.show()
+
+
+##################################################################
+###########################MAIN###################################
 
 if __name__ == '__main__':
     checkTime = False
@@ -209,11 +217,25 @@ if __name__ == '__main__':
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
-        frequencyBasedSampling(D)
+        motifs = frequencyBasedSampling(D)
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        # Freq of each motifs in DB
+        freqDB = frequencyMotifsInAllDB(motifs)
+        # Show the graph between freqSample and freqDB
+        showGraphFrequency(freqSample, freqDB)
+
     if algo == 2:
+        # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
-        areaBasedSampling(D)
+        motifs = areaBasedSampling(D)
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        # Freq of each motifs in DB
+        freqDB = frequencyMotifsInAllDB(motifs)
+        # Show the graph between freqSample and freqDB
+        showGraphFrequency(freqSample, freqDB)
 
     ########################
     # Close and print result
