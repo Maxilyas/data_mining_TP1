@@ -137,7 +137,6 @@ def init_pool_data(db):
 def contains(small):
     count = 0
     for i in Df:
-        #if len(i) < 80:
         if all(elem in i for elem in small):
             count = count + 1
     return count
@@ -201,7 +200,7 @@ class Graph:
 
 if __name__ == '__main__':
     checkTime = False
-    algo = 1
+    algo = 2
     #######################
     # Show the time passed in each function
     if checkTime:
