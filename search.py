@@ -5,7 +5,7 @@ import cProfile
 import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
 from sklearn.linear_model import LinearRegression
-
+import collections as c
 chance = random.seed(datetime.now())
 ##################################################################
 #########################DATA#####################################
@@ -33,7 +33,7 @@ def format_data():
 def getTransactionData(w,data,n):
     # Given a number of iteration, choose randomly n "transaction"
     D = random.choices(data, w, k=n)
-    print("TRANSACTION PRISE :", D)
+    print("Ensemble des Transactions :", D)
     return D
 
 ##################################################################
@@ -53,13 +53,13 @@ def frequencyBasedSampling(D):
             # Add it to the motifs if chance equals 1
             if chance == 1:
                 motifs.append(j)
-        print("MOTIFS : ",motifs)
+        #print("MOTIFS : ",motifs)
         # Checking if this motifs is already in allMotifs
         # If not we are adding it
         if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         motifs = []
-    print("ALL MOTIFS : ", allMotifs)
+    print("Motifs Retenu : ", allMotifs)
     return allMotifs
 
 # Second Algorithm
@@ -88,8 +88,8 @@ def areaBasedSampling(D):
         if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         iterate = iterate + 1
-        print("MOTIFS : ", motifs)
-    print("ALL MOTIFS :", allMotifs)
+        #print("MOTIFS : ", motifs)
+    print("Motifs Retenu :", allMotifs)
     return allMotifs
 
 def isInAllMotifs(allMotifs,motifs):
@@ -97,6 +97,32 @@ def isInAllMotifs(allMotifs,motifs):
         if z == motifs:
             return True
     return False
+#############################EVAL##DIVERSITY######################
+
+def evalDiversity(epoch,algo):
+    print("Evaluation de la diversité...")
+    count = 0
+    nbEpoch = epoch
+    while epoch > 0:
+        print("Epoch ", epoch)
+        D = getTransactionData(wFrequencyBased, data, n)
+        if algo == 1:
+            motifs1 = frequencyBasedSampling(D)
+        else:
+            motifs1 = areaBasedSampling(D)
+        D = getTransactionData(wFrequencyBased, data, n)
+        if algo == 1:
+            motifs2 = frequencyBasedSampling(D)
+        else:
+            motifs2 = areaBasedSampling(D)
+        for i in motifs1:
+            for j in motifs2:
+                if c.Counter(i) == c.Counter(j):
+                    count = count + 1
+        epoch = epoch - 1
+    print("Nombre de motifs récurrent : ", count)
+    print("Diversité : ", count/(nbEpoch*n))
+    print("Evaluation de la diversité terminé !")
 
 ##################################################################
 ###############MULTI_PROCESSING####COMPUTE FREQ###################
@@ -209,10 +235,12 @@ if __name__ == '__main__':
     #######################
     # Number of iterations
     n = 1000
+    epoch = 2
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
     if algo == 1:
+        evalDiversity(epoch, algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
@@ -225,6 +253,7 @@ if __name__ == '__main__':
         showGraphFrequency(freqSample, freqDB)
 
     if algo == 2:
+        evalDiversity(epoch, algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
