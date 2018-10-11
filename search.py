@@ -4,7 +4,7 @@ import random
 import cProfile
 import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
-from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
 
 chance = random.seed(datetime.now())
 ##################################################################
@@ -178,7 +178,7 @@ class Graph:
 
     def showGraphScatterAndRansac(self):
         # Fit line using all data
-        lr = linear_model.LinearRegression()
+        lr = LinearRegression()
         lr.fit(self.X, self.y_plot)
         # Predict data of estimated models
         line_X = np.arange(self.X.min(), self.X.max())[:, np.newaxis]
