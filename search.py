@@ -107,6 +107,7 @@ def evalDiversity(epoch,algo):
     print("Evaluation de la diversité...")
     count = 0
     nbEpoch = epoch
+    # Compare two sets of motifs (epoch times)
     while epoch > 0:
         print("Epoch ", epoch)
         D = getTransactionData(wFrequencyBased, data, n)
@@ -190,6 +191,7 @@ def parallelizeCode ():
 
 def showGraphFrequency(x,y):
 
+    # Give good arguments to the graph
     GraphFreq = Graph()
     GraphFreq.x_plot = x
     GraphFreq.y_plot = y
@@ -230,7 +232,7 @@ class Graph:
 
 if __name__ == '__main__':
     checkTime = False
-    algo = 2
+    algo = 1
     #######################
     # Show the time passed in each function
     if checkTime:
@@ -239,7 +241,7 @@ if __name__ == '__main__':
     #######################
     # Number of iterations
     n = 1000
-    epoch = 2
+    epoch = 1
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
