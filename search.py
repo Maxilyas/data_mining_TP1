@@ -18,7 +18,7 @@ def format_data():
     wFrequencyBased = []
     wAreaBased = []
     # Use it when there is different line length in the file
-    with open('chess.dat') as f:
+    with open('kosarak.dat') as f:
         data = []
         for line in f:  # read rest of lines
             data.append([int(x) for x in line.split()])
@@ -128,6 +128,16 @@ def evalDiversity(epoch,algo):
     print("Diversité : ", count/(nbEpoch*n*n))
     print("Evaluation de la diversité terminé !")
 
+def removeTooBigMotifs(allMotifs):
+    sum = 0
+    for i in allMotifs:
+        sum = sum + len(i)
+    avg = sum/len(allMotifs)
+    for i in allMotifs:
+        if len(i) > 1.7*avg:
+            allMotifs.remove(i)
+    print("Number of motifs after removing big ones :", len(allMotifs))
+    return allMotifs
 ##################################################################
 ###############MULTI_PROCESSING####COMPUTE FREQ###################
 
@@ -194,7 +204,7 @@ def showGraphFrequency(x,y,saveGraph):
     GraphFreq = Graph()
     GraphFreq.x_plot = x
     GraphFreq.y_plot = y
-    GraphFreq.X = np.array(x).reshape(-1,1)
+    GraphFreq.X = np.array(x).reshape(-1, 1)
 
     # Create a graph with relation between Freq Data and Freq sample
     GraphFreq.showGraphScatterAndRL(saveGraph)
@@ -232,7 +242,7 @@ class Graph:
             plt.savefig("Question7Graph.png")
         plt.show()
 
-    def showGraphScatter(self,name):
+    def showGraphScatter(self, name):
         plt.xlabel("Length Motifs")
         plt.ylabel("Number of Motifs")
         plt.scatter(self.x_plot, self.y_plot)
@@ -293,13 +303,15 @@ def distribFile(algo):
 
     print("DONE !")
 
+
+
 ##################################################################
 ###########################MAIN###################################
 
 if __name__ == '__main__':
     checkTimeInFunction = False
-    saveGraph = True
-    algo = 2
+    saveGraph = False
+    algo = 1
     #######################
     # Show the time passed in each function
     if checkTimeInFunction:
@@ -324,6 +336,8 @@ if __name__ == '__main__':
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
         motifs = frequencyBasedSampling(D)
+        # Removing too big motifs
+        motifs = removeTooBigMotifs(motifs)
         # Freq of each motifs in sample
         freqSample = frequencyMotifs(motifs)
         # Freq of each motifs in DB
@@ -338,6 +352,8 @@ if __name__ == '__main__':
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
         motifs = areaBasedSampling(D)
+        # Removing too big motifs
+        motifs = removeTooBigMotifs(motifs)
         # Freq of each motifs in sample
         freqSample = frequencyMotifs(motifs)
         # Freq of each motifs in DB
@@ -351,3 +367,13 @@ if __name__ == '__main__':
         pr.disable()
         pr.print_stats()
     ########################
+
+# Question 8 : L'algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ne se comporte pas très bien.
+# En effet, la longueur de la transaction est déjà en elle même un problème pour calculer les poids lors de l'algorithme d'échantillonnage.
+# De plus, lorsqu'on a une transaction beaucoup trop grande, on retrouve beaucoup de motif qui vont faire parti de cette transaction, et donc la diversité est moins bonne.
+# Pour ce qui est de l'idée de l'implémentation d'une solution, il faut tout d'abord pour la longueur d'onde, diviser par un nombre arbritraire pour ne pas dépasser les capacités de la machine
+# Pour la transaction beaucoup trop grande, si le fait de la supprimer ne change rien à la reprensation de notre base dans cette échantillonnage,
+# alors je pense qu'il faudrait qu'on décider de ne pas prendre ces transactions à partir d'une certaines longueur.
+
+# Question 11 : Pas vraiment. En général les ensembles fermés sont mal adaptés à la découverte de connaissance dans des relations bruitées.
+# En effet la contrainte de connexion est en pratique trop forte. On pourra avoir comme idée d'affaiblir cette contrainte.
