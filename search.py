@@ -318,6 +318,7 @@ if __name__ == '__main__':
 
 
     if algo == 1:
+        # Randomize selectors ensure high diversity !
         evalDiversity(epoch, algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wFrequencyBased, data, n)
@@ -331,6 +332,7 @@ if __name__ == '__main__':
         showGraphFrequency(freqSample, freqDB, saveGraph)
 
     if algo == 2:
+        # Randomize selectors ensure high diversity !
         evalDiversity(epoch, algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wAreaBased, data, n)
