@@ -6,6 +6,7 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt # pour l'affichage
 from sklearn.linear_model import LinearRegression
 import collections as c
+import os
 
 chance = random.seed(datetime.now())
 
@@ -198,7 +199,16 @@ def showGraphFrequency(x,y):
     GraphFreq.X = np.array(x).reshape(-1,1)
 
     # Create a graph with relation between Freq Data and Freq sample
-    GraphFreq.showGraphScatterAndRansac()
+    GraphFreq.showGraphScatterAndRL()
+
+def showGraphDistrib(x, y,name):
+    # Give good arguments to the graph
+    GraphFreq = Graph()
+    GraphFreq.x_plot = x
+    GraphFreq.y_plot = y
+
+    # Create a graph with relation between Freq Data and Freq sample
+    GraphFreq.showGraphScatter(name)
 
 
 class Graph:
@@ -207,7 +217,7 @@ class Graph:
         self.y_plot = []
         self.X = np.array([])
 
-    def showGraphScatterAndRansac(self):
+    def showGraphScatterAndRL(self):
         # Fit line using all data
         lr = LinearRegression()
         lr.fit(self.X, self.y_plot)
@@ -222,9 +232,151 @@ class Graph:
         plt.scatter(self.x_plot, self.y_plot)
         plt.show()
 
-    def showGraphScatterOnly(self):
+    def showGraphScatter(self,name):
         plt.scatter(self.x_plot, self.y_plot)
+        plt.savefig(name)
         plt.show()
+
+
+
+##################################################################
+##########################DISTRIBUTION############################
+
+def files():
+
+    # Use it when there is different line length in the file
+    with open('connect.dat') as f:
+        name = "fig_connect.png"
+        data = []
+        # Initializing weights for FrequencyBased and AreaBased Algorithm
+        wFrequencyBased = []
+        wAreaBased = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+        # Format data of a file to list ( uniform data )
+        # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+        # data = data.tolist()
+        for i in data:
+            # Calculating weights ( divide by arbitrary number in case len(i) is too big
+            wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+            wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+        # List of Transaction
+        global D
+        D = getTransactionData(wFrequencyBased, data, n)
+        # FrenquencyBased Algorithm
+        motifs = frequencyBasedSampling(D)
+        # length of motifs
+        x = [len(l) for l in motifs]
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        showGraphDistrib(x,freqSample,name)
+
+
+
+
+    # Use it when there is different line length in the file
+    with open('mushroom.dat') as f:
+        name = "fig_mushroom.png"
+        data = []
+        # Initializing weights for FrequencyBased and AreaBased Algorithm
+        wFrequencyBased = []
+        wAreaBased = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+        # Format data of a file to list ( uniform data )
+        # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+        # data = data.tolist()
+        for i in data:
+            # Calculating weights ( divide by arbitrary number in case len(i) is too big
+            wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+            wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+        # List of Transaction (n equals the number of iterations)
+        D = getTransactionData(wFrequencyBased, data, n)
+        # FrenquencyBased Algorithm
+        motifs = frequencyBasedSampling(D)
+        # length of motifs
+        x = [len(l) for l in motifs]
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        showGraphDistrib(x,freqSample,name)
+
+    # Use it when there is different line length in the file
+    with open('chess.dat') as f:
+        name = "fig_chess.png"
+        data = []
+        # Initializing weights for FrequencyBased and AreaBased Algorithm
+        wFrequencyBased = []
+        wAreaBased = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+        # Format data of a file to list ( uniform data )
+        # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+        # data = data.tolist()
+        for i in data:
+            # Calculating weights ( divide by arbitrary number in case len(i) is too big
+            wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+            wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+        # List of Transaction (n equals the number of iterations)
+        D = getTransactionData(wFrequencyBased, data, n)
+        # FrenquencyBased Algorithm
+        motifs = frequencyBasedSampling(D)
+        # length of motifs
+        x = [len(l) for l in motifs]
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        showGraphDistrib(x,freqSample,name)
+
+
+    # Use it when there is different line length in the file
+    with open('pumsb.dat') as f:
+        name = "fig_pumsb.png"
+        data = []
+        # Initializing weights for FrequencyBased and AreaBased Algorithm
+        wFrequencyBased = []
+        wAreaBased = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+        # Format data of a file to list ( uniform data )
+        # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+        # data = data.tolist()
+        for i in data:
+            # Calculating weights ( divide by arbitrary number in case len(i) is too big
+            wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+            wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+        # List of Transaction (n equals the number of iterations)
+        D = getTransactionData(wFrequencyBased, data, n)
+        # FrenquencyBased Algorithm
+        motifs = frequencyBasedSampling(D)
+        # length of motifs
+        x = [len(l) for l in motifs]
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        showGraphDistrib(x,freqSample,name)
+    # Use it when there is different line length in the file
+    with open('pumsb_star.dat') as f:
+        name = "fig_pumsb_star.png"
+        data = []
+        # Initializing weights for FrequencyBased and AreaBased Algorithm
+        wFrequencyBased = []
+        wAreaBased = []
+        for line in f:  # read rest of lines
+            data.append([int(x) for x in line.split()])
+        # Format data of a file to list ( uniform data )
+        # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+        # data = data.tolist()
+        for i in data:
+            # Calculating weights ( divide by arbitrary number in case len(i) is too big
+            wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+            wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+        # List of Transaction (n equals the number of iterations)
+        D = getTransactionData(wFrequencyBased, data, n)
+        # FrenquencyBased Algorithm
+        motifs = frequencyBasedSampling(D)
+        # length of motifs
+        x = [len(l) for l in motifs]
+        # Freq of each motifs in sample
+        freqSample = frequencyMotifs(motifs)
+        showGraphDistrib(x,freqSample,name)
 
 
 ##################################################################
@@ -242,11 +394,15 @@ if __name__ == '__main__':
     # Number of iterations
     n = 1000
     epoch = 1
+    D = []
+
+    files()
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
+
     if algo == 1:
-        evalDiversity(epoch, algo)
+        #evalDiversity(epoch, algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
