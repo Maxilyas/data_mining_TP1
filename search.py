@@ -18,7 +18,7 @@ def format_data():
     wFrequencyBased = []
     wAreaBased = []
     # Use it when there is different line length in the file
-    with open('kosarak.dat') as f:
+    with open('connect.dat') as f:
         data = []
         for line in f:  # read rest of lines
             data.append([int(x) for x in line.split()])
@@ -244,7 +244,7 @@ class Graph:
 
     def showGraphScatter(self, name):
         plt.xlabel("Length Motifs")
-        plt.ylabel("Number of Motifs")
+        plt.ylabel("Freq Motifs")
         plt.scatter(self.x_plot, self.y_plot)
         plt.savefig("fig_"+name+".png")
         plt.show()
@@ -324,7 +324,7 @@ if __name__ == '__main__':
     D = []
     # UNCOMMENT THIS ONLY IF YOU WANT TO CREATE GRAPH TO SEE DISTRIB
     # /!\ You have to change the file directory path in the function
-    # distribFile(algo)
+    #distribFile(algo)
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
