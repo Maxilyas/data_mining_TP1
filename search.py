@@ -19,32 +19,42 @@ def format_data():
     wFrequencyBased = []
     wAreaBased = []
     lenghtMax = []
+    data = []
     # Use it when there is different line length in the file
-    with open('chess.dat') as f:
-        data = []
+    with open('connect.dat') as f:
+        temp = []
         for line in f:  # read rest of
             transac = [int(x) for x in line.split()]
             lenghtMax.append(len(transac))
-            data.append(transac)
+            temp.append(transac)
             # Calculating weights
-            wFrequencyBased.append(pow(2, len(transac)))
-            wAreaBased.append((len(transac)*pow(2, len(transac)-1)))
+    # Solution Question 8
+    avg = sum(lenghtMax) / len(temp)
+    var = np.var(lenghtMax)
+    et = np.sqrt(var)
+    print("Average Length : ", avg)
+    print("Variance : ", var)
+    print("EcartType : ", et)
+    print("Maximum length ",max(lenghtMax))
+    if max(lenghtMax) <= avg + 2*et:
+        print("NO NEED TO TOUCH WEIGHTS")
+        data = temp
+        for i in data:
+            wFrequencyBased.append(pow(2, len(i)))
+            wAreaBased.append((len(i) * pow(2, len(i) - 1)))
+    else:
+        print("WE CAN'T DO THIS WITH THIS WEIGHTS...Changing...")
+        for i in temp:
+            if len(i) < avg + 2*et:
+                data.append(i)
+                wFrequencyBased.append(1)
+                wAreaBased.append(1)
 
     # Format data of a file to list ( uniform data )
     # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
     # data = data.tolist()
 
-    # Solution Question 8
-    avg = sum(lenghtMax)/len(data)
-    var = np.var(lenghtMax)
-    et = np.sqrt(var)
-    print ("Average Length : ",avg)
-    print("Variance : ",var)
-    print("EcartType : ",et)
 
-    #len(i) > avg + 2*et:
-
-    print("DATA LENGTH ",len(data))
     print("WFREQ ",len(wFrequencyBased))
 
     return wFrequencyBased, wAreaBased, data
@@ -261,7 +271,7 @@ class Graph:
 
     def showGraphScatter(self, name):
         plt.xlabel("Length Motifs")
-        plt.ylabel("Freq Motifs")
+        plt.ylabel("Freq Motifs (%)")
         plt.scatter(self.x_plot, self.y_plot)
         plt.savefig("fig_"+name+".png")
         plt.show()
@@ -291,32 +301,32 @@ def distribFile(algo):
                 # Format data of a file to list ( uniform data )
                 # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
                 # data = data.tolist()
-                if algo == 1:
-                    for i in data:
-                        # Calculating weights ( divide by arbitrary number in case len(i) is too big
-                        wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
-                    # List of Transaction
-                    D = getTransactionData(wFrequencyBased, data, n)
-                    # FrenquencyBased Algorithm
-                    motifs = frequencyBasedSampling(D)
-                    # length of motifs
-                    x = [len(l) for l in motifs]
-                    # Freq of each motifs in sample
-                    freqSample = frequencyMotifs(motifs)
-                    showGraphDistrib(x, freqSample, name)
+            if algo == 1:
+                for i in data:
+                    # Calculating weights ( divide by arbitrary number in case len(i) is too big
+                    wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+                # List of Transaction
+                D = getTransactionData(wFrequencyBased, data, n)
+                # FrenquencyBased Algorithm
+                motifs = frequencyBasedSampling(D)
+                # length of motifs
+                x = [len(l) for l in motifs]
+                # Freq of each motifs in sample
+                freqSample = frequencyMotifs(motifs)
+                showGraphDistrib(x, freqSample, name)
 
-                if algo == 2:
-                    for i in data:
-                        wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
-                    # List of Transaction
-                    D = getTransactionData(wFrequencyBased, data, n)
-                    # FrenquencyBased Algorithm
-                    motifs = frequencyBasedSampling(D)
-                    # length of motifs
-                    x = [len(l) for l in motifs]
-                    # Freq of each motifs in sample
-                    freqSample = frequencyMotifs(motifs)
-                    showGraphDistrib(x, freqSample, name)
+            if algo == 2:
+                for i in data:
+                    wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+                # List of Transaction
+                D = getTransactionData(wAreaBased, data, n)
+                # FrenquencyBased Algorithm
+                motifs = frequencyBasedSampling(D)
+                # length of motifs
+                x = [len(l) for l in motifs]
+                # Freq of each motifs in sample
+                freqSample = frequencyMotifs(motifs)
+                showGraphDistrib(x, freqSample, name)
 
     print("DONE !")
 
@@ -341,7 +351,7 @@ if __name__ == '__main__':
     D = []
     # UNCOMMENT THIS ONLY IF YOU WANT TO CREATE GRAPH TO SEE DISTRIB
     # /!\ You have to change the file directory path in the function
-    #distribFile(algo)
+    distribFile(algo)
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
