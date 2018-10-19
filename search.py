@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt # pour l'affichage
 from sklearn.linear_model import LinearRegression
 import collections as c
 import os
+from decimal import *
 
 chance = random.seed(datetime.now())
 
@@ -17,18 +18,34 @@ def format_data():
     # Initializing weights for FrequencyBased and AreaBased Algorithm
     wFrequencyBased = []
     wAreaBased = []
+    lenghtMax = []
     # Use it when there is different line length in the file
-    with open('connect.dat') as f:
+    with open('chess.dat') as f:
         data = []
-        for line in f:  # read rest of lines
-            data.append([int(x) for x in line.split()])
+        for line in f:  # read rest of
+            transac = [int(x) for x in line.split()]
+            lenghtMax.append(len(transac))
+            data.append(transac)
+            # Calculating weights
+            wFrequencyBased.append(pow(2, len(transac)))
+            wAreaBased.append((len(transac)*pow(2, len(transac)-1)))
+
     # Format data of a file to list ( uniform data )
     # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
     # data = data.tolist()
-    for i in data:
-        # Calculating weights ( divide by arbitrary number in case len(i) is too big
-        wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
-        wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+
+    # Solution Question 8
+    avg = sum(lenghtMax)/len(data)
+    var = np.var(lenghtMax)
+    et = np.sqrt(var)
+    print ("Average Length : ",avg)
+    print("Variance : ",var)
+    print("EcartType : ",et)
+
+    #len(i) > avg + 2*et:
+
+    print("DATA LENGTH ",len(data))
+    print("WFREQ ",len(wFrequencyBased))
 
     return wFrequencyBased, wAreaBased, data
 
@@ -36,7 +53,7 @@ def format_data():
 def getTransactionData(w,data,n):
     # Given a number of iteration, choose randomly n "transaction"
     D = random.choices(data, w, k=n)
-    print("Ensemble des Transactions :", D)
+    #print("Ensemble des Transactions :", D)
     return D
 
 ##################################################################
@@ -44,6 +61,7 @@ def getTransactionData(w,data,n):
 
 # First Algorithm
 def frequencyBasedSampling(D):
+    print("Frequency Based Sampling Algorithm engaged...")
     # Motifs chosen at first
     motifs = []
     # Motifs chosen without duplicate
@@ -62,11 +80,13 @@ def frequencyBasedSampling(D):
         if not isInAllMotifs(allMotifs, motifs):
             allMotifs.append(motifs)
         motifs = []
-    print("Motifs Retenu : ", allMotifs)
+    #print("Motifs Retenu : ", allMotifs)
+    print("DONE !")
     return allMotifs
 
 # Second Algorithm
 def areaBasedSampling(D):
+    print("Area Based Sampling algorithm engaged...")
     # Iterator
     iterate = 0
     # Size of motifs chosen
@@ -92,7 +112,8 @@ def areaBasedSampling(D):
             allMotifs.append(motifs)
         iterate = iterate + 1
         #print("MOTIFS : ", motifs)
-    print("Motifs Retenu :", allMotifs)
+    #print
+    print("DONE !")
     return allMotifs
 
 def isInAllMotifs(allMotifs,motifs):
@@ -123,49 +144,45 @@ def evalDiversity(epoch,algo):
                 if all(elem in i for elem in allMotifs[j]):
                     count = count + 1
         epoch = epoch - 1
-    print("COUNT", count)
-    print("Nombre de motifs récurrent : ", count)
+    #print("COUNT", count)
+    #print("Nombre de motifs récurrent : ", count)
     print("Diversité : ", count/(nbEpoch*n*n))
     print("Evaluation de la diversité terminé !")
 
-def removeTooBigMotifs(allMotifs):
-    sum = 0
-    for i in allMotifs:
-        sum = sum + len(i)
-    avg = sum/len(allMotifs)
-    for i in allMotifs:
-        if len(i) > 1.7*avg:
-            allMotifs.remove(i)
-    print("Number of motifs after removing big ones :", len(allMotifs))
-    return allMotifs
+
 ##################################################################
 ###############MULTI_PROCESSING####COMPUTE FREQ###################
 
 # Get Frequency Motifs from both algorithm
 def frequencyMotifs(allMotifs):
-    print("Nombre de motifs : ", len(allMotifs))
+    print("Calcul de la fréquence des motifs dans transaction...")
+    #print("Nombre de motifs : ", len(allMotifs))
     # Optimize the speed
     cpus = parallelizeCode()
     # Calling multiple agent depending on how many cpu (2 by default)
     pool = mp.Pool(cpus, init_pool, [D])
     # Calculating nb frequency in parellel for each motif
     result = pool.map(contains, allMotifs)
-    print("Fréquence de chaque motifs : ", result)
 
-    return result
+    resultFreq = [(x / len(D))*100 for x in result]
+    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("DONE !")
+    return resultFreq
 
 # Get Frequency Motifs in all DB
 def frequencyMotifsInAllDB(allMotifs):
-    print("Nombre de motifs : ", len(allMotifs))
+    print("Calcul de la fréquence des motifs dans la BD...")
+    #print("Nombre de motifs : ", len(allMotifs))
     # Optimize the speed
     cpus = parallelizeCode()
     # Calling multiple agent depending on how many cpu (2 by default)
     pool = mp.Pool(cpus, init_pool_data, [data])
     # Calculating nb frequency in parellel for each motif
     result = pool.map(checkAllDB, allMotifs)
-    print("Fréquence de chaque motifs : ", result)
-
-    return result
+    resultFreq = [(x / len(data))*100 for x in result]
+    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("DONE !")
+    return resultFreq
 
 def init_pool(D):
     global Df
@@ -235,8 +252,8 @@ class Graph:
         lw = 2
 
         plt.plot(line_X, line_y, color='navy', linewidth=lw, label='Linear regressor')
-        plt.xlabel("FreqSample")
-        plt.ylabel("FreqData")
+        plt.xlabel("FreqSample (%)")
+        plt.ylabel("FreqData (%)")
         plt.scatter(self.x_plot, self.y_plot)
         if saveGraph:
             plt.savefig("Question7Graph.png")
@@ -336,8 +353,6 @@ if __name__ == '__main__':
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
         motifs = frequencyBasedSampling(D)
-        # Removing too big motifs
-        motifs = removeTooBigMotifs(motifs)
         # Freq of each motifs in sample
         freqSample = frequencyMotifs(motifs)
         # Freq of each motifs in DB
@@ -352,8 +367,6 @@ if __name__ == '__main__':
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
         motifs = areaBasedSampling(D)
-        # Removing too big motifs
-        motifs = removeTooBigMotifs(motifs)
         # Freq of each motifs in sample
         freqSample = frequencyMotifs(motifs)
         # Freq of each motifs in DB
@@ -370,10 +383,11 @@ if __name__ == '__main__':
 
 # Question 8 : L'algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ne se comporte pas très bien.
 # En effet, la longueur de la transaction est déjà en elle même un problème pour calculer les poids lors de l'algorithme d'échantillonnage.
-# De plus, lorsqu'on a une transaction beaucoup trop grande, on retrouve beaucoup de motif qui vont faire parti de cette transaction, et donc la diversité est moins bonne.
-# Pour ce qui est de l'idée de l'implémentation d'une solution, il faut tout d'abord pour la longueur d'onde, diviser par un nombre arbritraire pour ne pas dépasser les capacités de la machine
-# Pour la transaction beaucoup trop grande, si le fait de la supprimer ne change rien à la reprensation de notre base dans cette échantillonnage,
-# alors je pense qu'il faudrait qu'on décider de ne pas prendre ces transactions à partir d'une certaines longueur.
+# De plus, lorsqu'on a une transaction beaucoup trop grande, celle ci va être tirer constamment avec notre algorithme, et donc la diversité ne va pas être bonne.
+
+# Pour la solution, nous pouvons changer la formule de calcul des poids pour pas que notre algorithme explose et que les transactions les plus grosses ne soit tiré.
+# Ainsi nous passerions d'un calcul à 2 puissance(len(data)) pour les petites transactions et 0 pour ceux dépassant (average + 2*ecart_type) par exemple,
+# Nous allons donc implémenter cette solution, en modifiant les poids lorsqu'une transaction est beaucoup trop grande.
 
 # Question 11 : Pas vraiment. En général les ensembles fermés sont mal adaptés à la découverte de connaissance dans des relations bruitées.
 # En effet la contrainte de connexion est en pratique trop forte. On pourra avoir comme idée d'affaiblir cette contrainte.
