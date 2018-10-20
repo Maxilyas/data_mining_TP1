@@ -4,7 +4,8 @@
 COMMENT LANCER
 **************
 
-Choisissez un dataset (chess.dat,mushroom.dat,connect.dat ...etc) est mettez le dans votre dossier avec search.py
+Choisissez un dataset (chess.dat,mushroom.dat,connect.dat ...etc) et mettez le dans votre dossier avec search.py
+Vous pouvez en trouver à l'addresse suivante : http://fimi.ua.ac.be/data/
 Dans format_data changer le nom de l'ouverture du fichier pour qu'il corresponde au votre.
 Exemple :  with open('connect.dat') as f: ->  with open('chess.dat') as f:
 lancer search.py
