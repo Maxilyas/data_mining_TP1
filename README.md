@@ -98,6 +98,7 @@ Création du Graph :
                            Appel à showGraphScatterAndRL pour l'affichage de tous les points et régression linéaire.
                            
 Question 8 : Comment se comporte l’algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ? (e.g., Kosarak). 
+Proposer et implémenter une solution.   
 
 L'algorithme sur des jeux de données contenant au moins une transaction beaucoup plus grande que les autres ne se comporte pas très bien.  
 En effet, la longueur de la transaction est déjà en elle même un problème pour calculer les poids lors de l'algorithme d'échantillonnage (overflow si la longueur de la transaction est énorme).  
