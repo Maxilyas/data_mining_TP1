@@ -386,14 +386,3 @@ if __name__ == '__main__':
         pr.disable()
         pr.print_stats()
     ########################
-
-# Question 8 : L'algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ne se comporte pas très bien.
-# En effet, la longueur de la transaction est déjà en elle même un problème pour calculer les poids lors de l'algorithme d'échantillonnage.
-# De plus, lorsqu'on a une transaction beaucoup trop grande, celle ci va être tirer constamment avec notre algorithme, et donc la diversité ne va pas être bonne.
-
-# Pour la solution, nous pouvons changer la formule de calcul des poids pour pas que notre algorithme explose et que les transactions les plus grosses ne soit tiré.
-# Ainsi nous passerions d'un calcul à 2 puissance(len(data)) pour les petites transactions et 0 pour ceux dépassant (average + 2*ecart_type) par exemple,
-# Nous allons donc implémenter cette solution, en modifiant les poids lorsqu'une transaction est beaucoup trop grande.
-
-# Question 11 : Pas vraiment. En général les ensembles fermés sont mal adaptés à la découverte de connaissance dans des relations bruitées.
-# En effet la contrainte de connexion est en pratique trop forte. On pourra avoir comme idée d'affaiblir cette contrainte.
