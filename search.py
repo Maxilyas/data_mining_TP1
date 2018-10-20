@@ -317,7 +317,7 @@ def distribFile(algo):
             if algo == 1:
                 for i in data:
                     # Calculating weights ( divide by arbitrary number in case len(i) is too big
-                    wFrequencyBased.append(pow(2, len(i))/pow(2,len(i)-2))
+                    wFrequencyBased.append(pow(2, len(i)))
                 # List of Transaction
                 D = getTransactionData(wFrequencyBased, data, n)
                 # FrenquencyBased Algorithm
@@ -333,7 +333,7 @@ def distribFile(algo):
 
             if algo == 2:
                 for i in data:
-                    wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
+                    wAreaBased.append((len(i)*pow(2, len(i)-1)))
                 # List of Transaction
                 D = getTransactionData(wAreaBased, data, n)
                 # areaBased Algorithm
