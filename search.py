@@ -371,7 +371,7 @@ if __name__ == '__main__':
     D = []
     # UNCOMMENT THIS ONLY IF YOU WANT TO CREATE GRAPH TO SEE DISTRIB
     # /!\ You have to change the file directory path in the function
-    distribFile(algo)
+    #distribFile(algo)
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
