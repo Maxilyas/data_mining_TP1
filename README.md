@@ -99,9 +99,6 @@ Création du Graph :
                            
 Question 8 : Comment se comporte l’algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ? (e.g., Kosarak). 
 
-Question 8 : Comment se comporte l’algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ? (e.g., Kosarak). 
-Proposer et implémenter une solution.   
-
 L'algorithme sur des jeux de données contenant au moins une transaction beaucoup plus grande que les autres ne se comporte pas très bien.  
 En effet, la longueur de la transaction est déjà en elle même un problème pour calculer les poids lors de l'algorithme d'échantillonnage (overflow si la longueur de la transaction est énorme).  
 De plus, lorsqu'on a une transaction beaucoup trop grande, celle ci va être tiré constamment à cause de son poids qui sera très élevé, et donc la diversité ne va pas être bonne.  
