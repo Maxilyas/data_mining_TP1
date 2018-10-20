@@ -106,7 +106,7 @@ De plus, lorsqu'on a une transaction beaucoup trop grande, celle ci va être tir
 
 Pour la solution, nous pouvons changer la formule de calcul des poids pour pas que notre algorithme explose et que les transactions les plus grosses ne soit tiré.  
 Ainsi tous ceux dépassant "Average + 2*Ecart-Type" serait supprimé de nos données. Lorsque cela arrive, il se peut qu'il y ait des transactions juste en dessous de ce nombre. Nous avons donc décider
-de données un poids équivalent à toutes les transactions pour pouvoir avoir une chance de toutes les tirer.
+de donner un poids équivalent à toutes les transactions pour pouvoir avoir une chance de toutes les tirer.
 
 Cette solution a été implémenté dans le fonction : format_data
 
