@@ -159,6 +159,16 @@ def evalDiversity(epoch,algo):
 ##################################################################
 ###############MULTI_PROCESSING####COMPUTE FREQ###################
 
+# Get frequency motifs from both algorithm without multiprocessing.
+def frequencyMotifsWithoutMP(allMotifs, sets):
+    result = []
+    for i in allMotifs:
+        result.append(checkMotifs(i,sets))
+    resultFreq = [(x / len(D))*100 for x in result]
+    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("DONE !")
+    return resultFreq
+
 # Get Frequency Motifs from both algorithm
 def frequencyMotifs(allMotifs):
     print("Calcul de la fréquence des motifs dans transaction...")
@@ -207,6 +217,13 @@ def contains(small):
 def checkAllDB(small):
     count = 0
     for i in data:
+        if all(elem in i for elem in small):
+            count = count + 1
+    return count
+
+def checkMotifs(small,sets):
+    count = 0
+    for i in sets:
         if all(elem in i for elem in small):
             count = count + 1
     return count
@@ -307,8 +324,11 @@ def distribFile(algo):
                 motifs = frequencyBasedSampling(D)
                 # length of motifs
                 x = [len(l) for l in motifs]
-                # Freq of each motifs in sample
-                freqSample = frequencyMotifs(motifs)
+                if multiProcessing:
+                    # Freq of each motifs in sample
+                    freqSample = frequencyMotifs(motifs)
+                else:
+                    freqSample = frequencyMotifsWithoutMP(motifs,D)
                 showGraphDistrib(x, freqSample, name)
 
             if algo == 2:
@@ -320,8 +340,11 @@ def distribFile(algo):
                 motifs = areaBasedSampling(D)
                 # length of motifs
                 x = [len(l) for l in motifs]
-                # Freq of each motifs in sample
-                freqSample = frequencyMotifs(motifs)
+                if multiProcessing:
+                    # Freq of each motifs in sample
+                    freqSample = frequencyMotifs(motifs)
+                else:
+                    freqSample = frequencyMotifsWithoutMP(motifs,D)
                 showGraphDistrib(x, freqSample, name)
 
     print("DONE !")
@@ -335,6 +358,7 @@ if __name__ == '__main__':
     checkTimeInFunction = False
     saveGraph = False
     algo = 1
+    multiProcessing = False
     #######################
     # Show the time passed in each function
     if checkTimeInFunction:
@@ -359,10 +383,16 @@ if __name__ == '__main__':
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
         motifs = frequencyBasedSampling(D)
-        # Freq of each motifs in sample
-        freqSample = frequencyMotifs(motifs)
-        # Freq of each motifs in DB
-        freqDB = frequencyMotifsInAllDB(motifs)
+        if multiProcessing:
+            # Freq of each motifs in sample
+            freqSample = frequencyMotifs(motifs)
+            # Freq of each motifs in DB
+            freqDB = frequencyMotifsInAllDB(motifs)
+        else:
+            # Freq of each motifs in sample
+            freqSample = frequencyMotifsWithoutMP(motifs,D)
+            # Freq of each motifs in DB
+            freqDB = frequencyMotifsWithoutMP(motifs,data)
         # Show the graph between freqSample and freqDB
         showGraphFrequency(freqSample, freqDB, saveGraph)
 
@@ -373,10 +403,16 @@ if __name__ == '__main__':
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
         motifs = areaBasedSampling(D)
-        # Freq of each motifs in sample
-        freqSample = frequencyMotifs(motifs)
-        # Freq of each motifs in DB
-        freqDB = frequencyMotifsInAllDB(motifs)
+        if multiProcessing:
+            # Freq of each motifs in sample
+            freqSample = frequencyMotifs(motifs)
+            # Freq of each motifs in DB
+            freqDB = frequencyMotifsInAllDB(motifs)
+        else:
+            # Freq of each motifs in sample
+            freqSample = frequencyMotifsWithoutMP(motifs,D)
+            # Freq of each motifs in DB
+            freqDB = frequencyMotifsWithoutMP(motifs,data)
         # Show the graph between freqSample and freqDB
         showGraphFrequency(freqSample, freqDB, saveGraph)
 

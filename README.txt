@@ -19,6 +19,7 @@ Vous avez plusieurs options que vous pouvez choisir dans le main :
 	- checkTimeInFunction : Si vous passez ce booléen à True, vous pourrez alors voir le temps passé dans chaques fonctions à la fin de l'exécution (dev option)
 	- saveGraph : Si vous passez ce booléen à True, alors lors de l'exécution du programme, la figure de la question7 sera automatiquement sauvegardé dans votre dossier.
 	- algo : Vous permet de choisir l'algo que vous voulez utiliser. Si vous mettez 1 alors l'algo de fréquence sera utilisé. Si vous mettez 2 alors l'algo d'aire sera utilisé.
+	- multiProcessing : Vous permet d'activer le multiprocessing.
 Vous pouvez faire varier certains paramètres :
 	- n : c'est le nombre de transaction qui va être choisie.
 	- epoch : C'est le nombre de fois que evalDiversity va faire tourner l'algorithme pour évaluer plus précisément la diversité.
@@ -49,6 +50,10 @@ Fonctions utilisées :
 	- checkAllDB : Fonction qui récupère le nombre de fois qu'un motif est présent dans la base de données (pour chaques motifs)
 	- parallelizeCode : Récupère le nombre de cpus que vous avez.
 
+	- frequencyMotifsWithoutMP : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+    - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait
+
+
 Question 5 : Pour 5 jeux de données différents, afficher la distribution de 1000 réalisations. Attention,
 l’approche s’appuie sur un tirage avec remise, il est donc possible d’avoir des doublons qu’il
 faudra veiller à supprimer. 
@@ -72,11 +77,16 @@ complète (tous les motifs de minsupp >= 1).
 Fonctions utilisées :
 	- frequencyMotifs : Retourne la valeur de la fréquence dans l'échantillon des motifs choisis. (/!\ multiprocessing)
 	- frequencyMotifsInAllDB : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis. (/!\ multiprocessing)
-	- showGraphFrequency : Création du graphe en fonction de la fréquence des motifs dans l'échantillon et de la fréquence dans la base de données.
-			       Appel à showGraphScatterAndRL pour l'affichage de tous les points et régression linéaire.
 	- init_pool_data,init_pool : Permet de passer la variable global à tous les agents
 	- checkAllDb,contains : récupère respectivement le nombre de fois qu'un motifs apparait dans la BD et dans l'échantillon.
 	- parallelizeCode : Récupère le nombre de cpus que vous avez.
+
+Si vous n'avez pas choisis le multiprocessing :
+	- frequencyMotifsWithoutMP : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+    - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait
+
+    - showGraphFrequency : Création du graphe en fonction de la fréquence des motifs dans l'échantillon et de la fréquence dans la base de données.
+                           Appel à showGraphScatterAndRL pour l'affichage de tous les points et régression linéaire.
 
 Question 8 : Comment se comporte l’algorithme sur des jeux de données contenant au moins une transactions beaucoup plus grande que les autres ? (e.g., Kosarak). 
 Proposer et implémenter une solution. 
