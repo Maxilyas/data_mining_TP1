@@ -1,4 +1,5 @@
-# data_mining_TP1
+GOMES Antoine 11307010
+AMBROSINO Gwenaël 11212798
 
 **************
 COMMENT LANCER

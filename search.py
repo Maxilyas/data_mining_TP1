@@ -27,7 +27,7 @@ def format_data():
             transac = [int(x) for x in line.split()]
             lenghtMax.append(len(transac))
             temp.append(transac)
-            # Calculating weights
+
     # Solution Question 8
     avg = sum(lenghtMax) / len(temp)
     var = np.var(lenghtMax)
@@ -36,26 +36,22 @@ def format_data():
     print("Variance : ", var)
     print("EcartType : ", et)
     print("Maximum length ",max(lenghtMax))
+
+    # Check if the biggest transaction is bigger than avg+2*et
     if max(lenghtMax) <= avg + 2*et:
-        print("NO NEED TO TOUCH WEIGHTS")
+        # If not we are not touching the algorithm
         data = temp
         for i in data:
+            # Calculating weights
             wFrequencyBased.append(pow(2, len(i)))
             wAreaBased.append((len(i) * pow(2, len(i) - 1)))
     else:
-        print("WE CAN'T DO THIS WITH THIS WEIGHTS...Changing...")
+        # We are putting equivalent weights because otherwise the same transaction will be picked.
         for i in temp:
             if len(i) < avg + 2*et:
                 data.append(i)
                 wFrequencyBased.append(1)
                 wAreaBased.append(1)
-
-    # Format data of a file to list ( uniform data )
-    # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
-    # data = data.tolist()
-
-
-    print("WFREQ ",len(wFrequencyBased))
 
     return wFrequencyBased, wAreaBased, data
 
@@ -140,7 +136,7 @@ def evalDiversity(epoch,algo):
     count = 0
     nbEpoch = epoch
     global D
-    # Compare two sets of motifs (epoch times)
+    # Compare sets of motifs (epoch times)
     while epoch > 0:
         print("Epoch ", epoch)
         if algo == 1:
@@ -320,8 +316,8 @@ def distribFile(algo):
                     wAreaBased.append((len(i)*pow(2, len(i)-1))/pow(2,len(i)-2))
                 # List of Transaction
                 D = getTransactionData(wAreaBased, data, n)
-                # FrenquencyBased Algorithm
-                motifs = frequencyBasedSampling(D)
+                # areaBased Algorithm
+                motifs = areaBasedSampling(D)
                 # length of motifs
                 x = [len(l) for l in motifs]
                 # Freq of each motifs in sample
@@ -351,7 +347,7 @@ if __name__ == '__main__':
     D = []
     # UNCOMMENT THIS ONLY IF YOU WANT TO CREATE GRAPH TO SEE DISTRIB
     # /!\ You have to change the file directory path in the function
-    distribFile(algo)
+    #distribFile(algo)
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
