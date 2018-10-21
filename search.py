@@ -131,28 +131,24 @@ def isInAllMotifs(allMotifs,motifs):
 ##################################################################
 #############################EVAL##DIVERSITY######################
 
-def evalDiversity(epoch,algo):
+# Check the equality of each motifs and return val between 0 and 1 (0=high diversity,1=bad diversity)
+def evalDiversity(algo):
     print("Evaluation de la diversité...")
     count = 0
-    nbEpoch = epoch
     global D
-    # Compare sets of motifs (epoch times)
-    while epoch > 0:
-        print("Epoch ", epoch)
-        if algo == 1:
-            D = getTransactionData(wFrequencyBased, data, n)
-            allMotifs = frequencyBasedSampling(D)
-        if algo == 2:
-            D = getTransactionData(wAreaBased, data, n)
-            allMotifs = areaBasedSampling(D)
-        for i in allMotifs:
-            for j in range(len(allMotifs)):
-                if all(elem in i for elem in allMotifs[j]):
-                    count = count + 1
-        epoch = epoch - 1
-    #print("COUNT", count)
-    #print("Nombre de motifs récurrent : ", count)
-    print("Diversité : ", count/(nbEpoch*n*n))
+    # Compare sets of motifs
+    if algo == 1:
+        D = getTransactionData(wFrequencyBased, data, n)
+        allMotifs = frequencyBasedSampling(D)
+    if algo == 2:
+        D = getTransactionData(wAreaBased, data, n)
+        allMotifs = areaBasedSampling(D)
+    for i in allMotifs:
+        for j in allMotifs:
+            if set(j) == set(i):
+                count = count + 1
+    count = count - len(allMotifs)
+    print("Diversité : ", count/n)
     print("Evaluation de la diversité terminé !")
 
 
@@ -162,6 +158,7 @@ def evalDiversity(epoch,algo):
 # Get frequency motifs from both algorithm without multiprocessing.
 def frequencyMotifsWithoutMP(allMotifs, sets):
     result = []
+    print("Calcul de la fréquence des motifs en cours...")
     for i in allMotifs:
         result.append(checkMotifs(i,sets))
     resultFreq = [(x / len(D))*100 for x in result]
@@ -357,7 +354,7 @@ def distribFile(algo):
 if __name__ == '__main__':
     checkTimeInFunction = False
     saveGraph = False
-    algo = 1
+    algo = 2
     multiProcessing = False
     #######################
     # Show the time passed in each function
@@ -367,7 +364,6 @@ if __name__ == '__main__':
     #######################
     # Number of iterations
     n = 1000
-    epoch = 5
     D = []
     # UNCOMMENT THIS ONLY IF YOU WANT TO CREATE GRAPH TO SEE DISTRIB
     # /!\ You have to change the file directory path in the function
@@ -378,7 +374,7 @@ if __name__ == '__main__':
 
     if algo == 1:
         # Randomize selectors ensure high diversity !
-        evalDiversity(epoch, algo)
+        evalDiversity(algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
@@ -398,7 +394,7 @@ if __name__ == '__main__':
 
     if algo == 2:
         # Randomize selectors ensure high diversity !
-        evalDiversity(epoch, algo)
+        evalDiversity(algo)
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm

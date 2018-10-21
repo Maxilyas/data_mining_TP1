@@ -22,7 +22,6 @@ Vous avez plusieurs options que vous pouvez choisir dans le main :
 	- multiProcessing : Vous permet d'activer le multiprocessing.
 Vous pouvez faire varier certains paramètres :
 	- n : c'est le nombre de transaction qui va être choisie.
-	- epoch : C'est le nombre de fois que evalDiversity va faire tourner l'algorithme pour évaluer plus précisément la diversité.
 
 **************
 ***QUESTION***
@@ -69,7 +68,7 @@ Fonctions utilisées :
 
 Question 6 : Mettre en place une expérience pour évaluer la diversité de k tirages. 
 Fonctions utilisées :
-	- evalDiversity : Evalue la diversité sur epoch fois l'algorithme. Regarde si les motifs se ressemble. Valeur retourner est entre 0 et 1. Plus vous vous rapprochez de 0,
+	- evalDiversity : Evalue la diversité sur l'algorithme. Regarde si les motifs sont équivalent. Valeur retourner est entre 0 et 1. Plus vous vous rapprochez de 0,
 			  meilleur sera votre diversité. (le fait que nous faisons des choix aléatoires assure une très bonne diversité dans l'échantillon)
 
 Question 7 : Mettre en place une expérience pour tester l’échantillonnage par rapport à une approche
