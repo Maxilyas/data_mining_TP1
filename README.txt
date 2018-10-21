@@ -49,7 +49,8 @@ Fonctions utilisées :
 	- checkAllDB : Fonction qui récupère le nombre de fois qu'un motif est présent dans la base de données (pour chaques motifs)
 	- parallelizeCode : Récupère le nombre de cpus que vous avez.
 
-	- frequencyMotifsWithoutMP : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+	- frequencyMotifsWithoutMPInDB : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+	- frequencyMotifsWithoutMPInTransac : Retourne la valeur de la fréquence (en %) dans les transactions des motifs choisis.
     - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait
 
 
@@ -81,7 +82,8 @@ Fonctions utilisées :
 	- parallelizeCode : Récupère le nombre de cpus que vous avez.
 
 Si vous n'avez pas choisis le multiprocessing :
-	- frequencyMotifsWithoutMP : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+	- frequencyMotifsWithoutMPInDB : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+	- frequencyMotifsWithoutMPInTransac : Retourne la valeur de la fréquence (en %) dans les transactions des motifs choisis.
     - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait
 
     - showGraphFrequency : Création du graphe en fonction de la fréquence des motifs dans l'échantillon et de la fréquence dans la base de données.

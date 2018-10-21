@@ -53,7 +53,8 @@ Fonctions utilisées :
 
 Si vous n'avez pas activé le multiprocessing :
 
-    - frequencyMotifsWithoutMP : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+ 	- frequencyMotifsWithoutMPInDB : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+	- frequencyMotifsWithoutMPInTransac : Retourne la valeur de la fréquence (en %) dans les transactions des motifs choisis.
     - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait
 
 Question 5 : Pour 5 jeux de données différents, afficher la distribution de 1000 réalisations. Attention,
@@ -88,7 +89,8 @@ Fonctions utilisées :
 	
 Si vous n'avez pas choisis le multiprocessing :
 
-	- frequencyMotifsWithoutMP : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.  
+	- frequencyMotifsWithoutMPInDB : Retourne la valeur de la fréquence (en %) dans la BD(data) des motifs choisis.
+	- frequencyMotifsWithoutMPInTransac : Retourne la valeur de la fréquence (en %) dans les transactions des motifs choisis. 
     - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait  
 
 Création du Graph :

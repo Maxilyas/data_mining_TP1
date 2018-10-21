@@ -21,7 +21,7 @@ def format_data():
     lenghtMax = []
     data = []
     # Use it when there is different line length in the file
-    with open('connect.dat') as f:
+    with open('mushroom.dat') as f:
         temp = []
         for line in f:  # read rest of
             transac = [int(x) for x in line.split()]
@@ -155,13 +155,24 @@ def evalDiversity(algo):
 ##################################################################
 ###############MULTI_PROCESSING####COMPUTE FREQ###################
 
-# Get frequency motifs from both algorithm without multiprocessing.
-def frequencyMotifsWithoutMP(allMotifs, sets):
+# Get frequency motifs in D from both algorithm without multiprocessing.
+def frequencyMotifsWithoutMPInTransac(allMotifs, D):
     result = []
     print("Calcul de la fréquence des motifs en cours...")
     for i in allMotifs:
-        result.append(checkMotifs(i,sets))
+        result.append(checkMotifs(i,D))
     resultFreq = [(x / len(D))*100 for x in result]
+    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("DONE !")
+    return resultFreq
+
+# Get frequency motifs in Data from both algorithm without multiprocessing.
+def frequencyMotifsWithoutMPInDB(allMotifs, data):
+    result = []
+    print("Calcul de la fréquence des motifs en cours...")
+    for i in allMotifs:
+        result.append(checkMotifs(i,data))
+    resultFreq = [(x / len(data))*100 for x in result]
     print("Fréquence de chaque motifs (%) : ", resultFreq)
     print("DONE !")
     return resultFreq
@@ -325,7 +336,7 @@ def distribFile(algo):
                     # Freq of each motifs in sample
                     freqSample = frequencyMotifs(motifs)
                 else:
-                    freqSample = frequencyMotifsWithoutMP(motifs,D)
+                    freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
                 showGraphDistrib(x, freqSample, name)
 
             if algo == 2:
@@ -341,7 +352,7 @@ def distribFile(algo):
                     # Freq of each motifs in sample
                     freqSample = frequencyMotifs(motifs)
                 else:
-                    freqSample = frequencyMotifsWithoutMP(motifs,D)
+                    freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
                 showGraphDistrib(x, freqSample, name)
 
     print("DONE !")
@@ -386,9 +397,9 @@ if __name__ == '__main__':
             freqDB = frequencyMotifsInAllDB(motifs)
         else:
             # Freq of each motifs in sample
-            freqSample = frequencyMotifsWithoutMP(motifs,D)
+            freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
             # Freq of each motifs in DB
-            freqDB = frequencyMotifsWithoutMP(motifs,data)
+            freqDB = frequencyMotifsWithoutMPInDB(motifs,data)
         # Show the graph between freqSample and freqDB
         showGraphFrequency(freqSample, freqDB, saveGraph)
 
@@ -406,9 +417,9 @@ if __name__ == '__main__':
             freqDB = frequencyMotifsInAllDB(motifs)
         else:
             # Freq of each motifs in sample
-            freqSample = frequencyMotifsWithoutMP(motifs,D)
+            freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
             # Freq of each motifs in DB
-            freqDB = frequencyMotifsWithoutMP(motifs,data)
+            freqDB = frequencyMotifsWithoutMPInDB(motifs,data)
         # Show the graph between freqSample and freqDB
         showGraphFrequency(freqSample, freqDB, saveGraph)
 
