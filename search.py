@@ -365,7 +365,7 @@ def distribFile(algo):
 if __name__ == '__main__':
     checkTimeInFunction = False
     saveGraph = False
-    algo = 2
+    algo = 1
     multiProcessing = False
     #######################
     # Show the time passed in each function
