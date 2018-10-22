@@ -53,6 +53,7 @@ Fonctions utilisées :
 	- frequencyMotifsWithoutMPInTransac : Retourne la valeur de la fréquence (en %) dans les transactions des motifs choisis.
     - checkMotifs : Fonction qui prend en argument votre ensemble et récupère le nombre de fois que le motifs apparait
 
+Question 4 : Nous avons testé nos données sur chess.dat,mushroom.dat,connect.dat,pumsb.dat,pumsb_star.dat et kosarak.dat
 
 Question 5 : Pour 5 jeux de données différents, afficher la distribution de 1000 réalisations. Attention,
 l’approche s’appuie sur un tirage avec remise, il est donc possible d’avoir des doublons qu’il
@@ -100,7 +101,7 @@ Pour la solution, nous pouvons changer la formule de calcul des poids pour pas q
 Ainsi tous ceux dépassant "Average + 2*Ecart-Type" serait supprimé de nos données. Lorsque cela arrive, il se peut qu'il y ait des transactions juste en dessous de ce nombre. Nous avons donc décider
 de donner un poids équivalent à toutes les transactions pour pouvoir avoir une chance de toutes les tirer.
 
-Cette solution a été implémenté dans le fonction : format_data
+Cette solution a été implémenté dans la fonction : format_data
 
 Question 11 : Cette approche est elle adaptée pour échantillonner des motifs fermés ? Justifier et discuter une solution en fonction.
 

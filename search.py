@@ -50,7 +50,7 @@ def format_data():
         for i in temp:
             if len(i) < avg + 2*et:
                 data.append(i)
-                wFrequencyBased.append(1)
+                wFrequencyBased.append()
                 wAreaBased.append(1)
 
     return wFrequencyBased, wAreaBased, data
