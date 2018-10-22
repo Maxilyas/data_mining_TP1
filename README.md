@@ -19,7 +19,8 @@ Vous avez plusieurs options que vous pouvez choisir dans le main :
 	- checkTimeInFunction : Si vous passez ce booléen à True, vous pourrez alors voir le temps passé dans chaques fonctions à la fin de l'exécution (dev option)  
 	- saveGraph : Si vous passez ce booléen à True, alors lors de l'exécution du programme, la figure de la question7 sera automatiquement sauvegardé dans votre dossier.  
 	- algo : Vous permet de choisir l'algo que vous voulez utiliser. Si vous mettez 1 alors l'algo de fréquence sera utilisé. Si vous mettez 2 alors l'algo d'aire sera utilisé.  
-	- multiProcessing : Vous permet d'activer le multiprocessing.   
+	- multiProcessing : Vous permet d'activer le multiprocessing.    
+	- saveDistribFile : Vous permet de sauvegarder les graphs de distribution   
 Vous pouvez faire varier certains paramètres :  
 
 	- n : c'est le nombre de transaction qui va être choisie.  
@@ -63,10 +64,10 @@ faudra veiller à supprimer.
 Fonctions utilisées :  
 
 	- isInAllMotifs : retire les doublons.  
-	- distribFile : /!\ Cette fonction est commenté dans le code. Nous avons déjà crée les 5 distributions sur des jeux de données différents.  
+	- distribFile : Nous avons déjà crée les 5 distributions sur des jeux de données différents.  
 			Si vous voulez utilisez cette fonction vous même, il faut alors faire attention de changer :  
 			**** inputdir = "/home/antoine/Documents/data_mining/data_mining_TP1" -> inputdir = "/your/location/file" ****  
-			Cependant faites attention, la fonction fait la distribution de tous les fichiers .dat présent dans votre dossier et les sauvegardes dans ce même dossier.  
+			Cependant faites attention, la fonction fait la distribution de tous les fichiers .dat présent dans votre dossier et les sauvegardes dans ce même dossier (sauvegarde en option dans le main).    
 			( Ne marche pas avec des sets de données ou il y a une transaction beaucoup plus grande !)  
 	- ShowGraphDistrib : Affiche la distribution en fonctions de la fréquence et de la longueur des motifs. (appelle à showGraphScatter)  
 	

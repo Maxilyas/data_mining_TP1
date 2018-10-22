@@ -162,7 +162,7 @@ def frequencyMotifsWithoutMPInTransac(allMotifs, D):
     for i in allMotifs:
         result.append(checkMotifs(i,D))
     resultFreq = [(x / len(D))*100 for x in result]
-    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("Fréquence des 10 premiers motifs dans la base de  affiché (%) : ", resultFreq[0:10])
     print("DONE !")
     return resultFreq
 
@@ -173,7 +173,7 @@ def frequencyMotifsWithoutMPInDB(allMotifs, data):
     for i in allMotifs:
         result.append(checkMotifs(i,data))
     resultFreq = [(x / len(data))*100 for x in result]
-    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("Fréquence des 10 premiers motifs dans la base de  affiché (%) : ", resultFreq[0:10])
     print("DONE !")
     return resultFreq
 
@@ -189,7 +189,7 @@ def frequencyMotifs(allMotifs):
     result = pool.map(contains, allMotifs)
 
     resultFreq = [(x / len(D))*100 for x in result]
-    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("Fréquence des 10 premiers motifs dans la base de  affiché (%) : ", resultFreq[0:10])
     print("DONE !")
     return resultFreq
 
@@ -204,7 +204,7 @@ def frequencyMotifsInAllDB(allMotifs):
     # Calculating nb frequency in parellel for each motif
     result = pool.map(checkAllDB, allMotifs)
     resultFreq = [(x / len(data))*100 for x in result]
-    print("Fréquence de chaque motifs (%) : ", resultFreq)
+    print("Fréquence des 10 premiers motifs dans la base de  affiché (%) : ", resultFreq[0:10])
     print("DONE !")
     return resultFreq
 
@@ -294,7 +294,8 @@ class Graph:
         plt.xlabel("Length Motifs")
         plt.ylabel("Freq Motifs (%)")
         plt.scatter(self.x_plot, self.y_plot)
-        plt.savefig("fig_"+name+".png")
+        if saveDistribFile:
+            plt.savefig("fig_"+name+".png")
         plt.show()
 
 
@@ -304,56 +305,57 @@ class Graph:
 
 def distribFile(algo):
 
-    print("SAVING DISTRIB GRAPH IN PROGRESS ...")
-    inputdir = "/home/antoine/Documents/data_mining/data_mining_TP1"
+    print("DISTRIB GRAPH IN PROGRESS ...")
+    inputdir = os.path.dirname(os.path.realpath(__file__))
     filelist = os.listdir(inputdir)
     global D
     # Use it when there is different line length in the file
     for input in filelist:
         if input.endswith(".dat"):
-            with open(input) as f:
-                name = os.path.splitext(input)[0]
-                data = []
-                # Initializing weights for FrequencyBased and AreaBased Algorithm
-                wFrequencyBased = []
-                wAreaBased = []
-                for line in f:  # read rest of lines
-                    data.append([int(x) for x in line.split()])
-                # Format data of a file to list ( uniform data )
-                # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
-                # data = data.tolist()
-            if algo == 1:
-                for i in data:
-                    # Calculating weights ( divide by arbitrary number in case len(i) is too big
-                    wFrequencyBased.append(pow(2, len(i)))
-                # List of Transaction
-                D = getTransactionData(wFrequencyBased, data, n)
-                # FrenquencyBased Algorithm
-                motifs = frequencyBasedSampling(D)
-                # length of motifs
-                x = [len(l) for l in motifs]
-                if multiProcessing:
-                    # Freq of each motifs in sample
-                    freqSample = frequencyMotifs(motifs)
-                else:
-                    freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
-                showGraphDistrib(x, freqSample, name)
+            if not input.startswith("kosarak"):
+                with open(input) as f:
+                    name = os.path.splitext(input)[0]
+                    data = []
+                    # Initializing weights for FrequencyBased and AreaBased Algorithm
+                    wFrequencyBased = []
+                    wAreaBased = []
+                    for line in f:  # read rest of lines
+                        data.append([int(x) for x in line.split()])
+                    # Format data of a file to list ( uniform data )
+                    # data = np.genfromtxt('mushroom.dat', delimiter=" ",dtype=None)
+                    # data = data.tolist()
+                if algo == 1:
+                    for i in data:
+                        # Calculating weights ( divide by arbitrary number in case len(i) is too big
+                        wFrequencyBased.append(pow(2, len(i)))
+                    # List of Transaction
+                    D = getTransactionData(wFrequencyBased, data, n)
+                    # FrenquencyBased Algorithm
+                    motifs = frequencyBasedSampling(D)
+                    # length of motifs
+                    x = [len(l) for l in motifs]
+                    if multiProcessing:
+                        # Freq of each motifs in sample
+                        freqSample = frequencyMotifs(motifs)
+                    else:
+                        freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
+                    showGraphDistrib(x, freqSample, name)
 
-            if algo == 2:
-                for i in data:
-                    wAreaBased.append((len(i)*pow(2, len(i)-1)))
-                # List of Transaction
-                D = getTransactionData(wAreaBased, data, n)
-                # areaBased Algorithm
-                motifs = areaBasedSampling(D)
-                # length of motifs
-                x = [len(l) for l in motifs]
-                if multiProcessing:
-                    # Freq of each motifs in sample
-                    freqSample = frequencyMotifs(motifs)
-                else:
-                    freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
-                showGraphDistrib(x, freqSample, name)
+                if algo == 2:
+                    for i in data:
+                        wAreaBased.append((len(i)*pow(2, len(i)-1)))
+                    # List of Transaction
+                    D = getTransactionData(wAreaBased, data, n)
+                    # areaBased Algorithm
+                    motifs = areaBasedSampling(D)
+                    # length of motifs
+                    x = [len(l) for l in motifs]
+                    if multiProcessing:
+                        # Freq of each motifs in sample
+                        freqSample = frequencyMotifs(motifs)
+                    else:
+                        freqSample = frequencyMotifsWithoutMPInTransac(motifs,D)
+                    showGraphDistrib(x, freqSample, name)
 
     print("DONE !")
 
@@ -367,6 +369,7 @@ if __name__ == '__main__':
     saveGraph = False
     algo = 1
     multiProcessing = False
+    saveDistribFile = False
     #######################
     # Show the time passed in each function
     if checkTimeInFunction:
@@ -376,16 +379,19 @@ if __name__ == '__main__':
     # Number of iterations
     n = 1000
     D = []
+    print("Veuillez changer inputdir pour l'affichage des distributions si ce n'est pas fait.")
     # UNCOMMENT THIS ONLY IF YOU WANT TO CREATE GRAPH TO SEE DISTRIB
     # /!\ You have to change the file directory path in the function
-    #distribFile(algo)
+    distribFile(algo)
     # Format data
     wFrequencyBased, wAreaBased, data = format_data()
 
 
     if algo == 1:
         # Randomize selectors ensure high diversity !
+        print("")
         evalDiversity(algo)
+        print("")
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wFrequencyBased, data, n)
         # FrenquencyBased Algorithm
@@ -405,7 +411,9 @@ if __name__ == '__main__':
 
     if algo == 2:
         # Randomize selectors ensure high diversity !
+        print("")
         evalDiversity(algo)
+        print("")
         # List of Transaction (n equals the number of iterations)
         D = getTransactionData(wAreaBased, data, n)
         # AreaBased Algorithm
